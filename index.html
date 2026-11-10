@@ -101,6 +101,24 @@
             font-size: 1.1rem
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .nav-toggle {
+            display: none;
+            background: transparent;
+            border: 2px solid var(--line);
+            color: var(--ink);
+            border-radius: 10px;
+            padding: .25rem .65rem;
+            font-size: 1.25rem;
+            cursor: pointer;
+            line-height: 1
+        }
+
         nav {
             display: flex;
             gap: .2rem;
@@ -118,6 +136,33 @@
         nav a.on {
             background: var(--a);
             color: var(--on)
+        }
+
+        @media (max-width: 768px) {
+            .nav-toggle {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center
+            }
+
+            nav {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                gap: .3rem;
+                padding-top: .5rem
+            }
+
+            nav.open {
+                display: flex
+            }
+
+            nav a {
+                border-radius: 10px;
+                padding: .5rem .85rem;
+                width: 100%;
+                text-align: left
+            }
         }
 
         a:focus-visible,
@@ -477,9 +522,12 @@
 <body>
     <header>
         <a class="logo" href="#home"><span class="seal han">中</span>Zhongwen</a>
-        <nav aria-label="Main"><a href="#home">Home</a><a href="#vocabulary">Vocabulary</a><a
+        <nav id="navMenu" aria-label="Main"><a href="#home">Home</a><a href="#vocabulary">Vocabulary</a><a
                 href="#flashcards">Flashcards</a><a href="#practice">Practice</a><a href="#about">About us</a></nav>
-        <button class="tg" id="theme" type="button" aria-pressed="false">Dark mode</button>
+        <div class="header-actions">
+            <button class="tg" id="theme" type="button" aria-pressed="false">Dark mode</button>
+            <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+        </div>
     </header>
     <main>
 
@@ -601,6 +649,15 @@
         setTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
         tb.onclick = function () { setTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark', true) };
 
+        /* mobile nav toggle */
+        var navToggle = $('navToggle'), navMenu = $('navMenu');
+        if (navToggle && navMenu) {
+            navToggle.onclick = function () {
+                var isOpen = navMenu.classList.toggle('open');
+                navToggle.setAttribute('aria-expanded', isOpen);
+            };
+        }
+
         /* routing */
         var views = ['home', 'vocabulary', 'flashcards', 'practice', 'about'];
         function route() {
@@ -608,6 +665,8 @@
             views.forEach(function (v) { $(v).classList.toggle('on', v === id) });
             document.body.classList.toggle('home', id === 'home');
             document.querySelectorAll('nav a').forEach(function (a) { a.classList.toggle('on', a.getAttribute('href') === '#' + id) });
+            if (navMenu) navMenu.classList.remove('open');
+            if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
             window.scrollTo(0, 0)
         }
         window.addEventListener('hashchange', route); route();
