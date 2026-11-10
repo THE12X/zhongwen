@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>Zhongwen · Learn Chinese free</title>
-     <link rel="icon" type="image/x-icon" href="china.ico" />
+    <link rel="icon" type="image/x-icon" href="china.ico" />
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Figtree:wght@400;600&display=swap">
     <style>
@@ -71,13 +71,17 @@
         }
 
         header {
+            position: relative;
+            z-index: 100;
+            background: var(--bg);
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
             gap: .4rem 1rem;
             padding: .7rem 5vw;
-            border-bottom: 1px solid var(--line)
+            border-bottom: 1px solid var(--line);
+            transition: background .25s
         }
 
         .logo {
@@ -104,7 +108,7 @@
         .header-actions {
             display: flex;
             align-items: center;
-            gap: .5rem;
+            gap: .5rem
         }
 
         .nav-toggle {
@@ -139,6 +143,12 @@
         }
 
         @media (max-width: 768px) {
+            body.home {
+                height: auto;
+                min-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+                overflow-y: auto
+            }
+
             .nav-toggle {
                 display: inline-flex;
                 align-items: center;
