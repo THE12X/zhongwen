@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+v<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -504,6 +504,128 @@
             font-weight: 700
         }
 
+        /* Word Groups section */
+        .wg-list {
+            display: grid;
+            gap: 1rem
+        }
+
+        .wg-card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            overflow: hidden
+        }
+
+        .wg-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .5rem;
+            padding: .65rem 1rem;
+            border-bottom: 1px solid var(--line);
+            background: var(--bg)
+        }
+
+        .wg-py {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--a2)
+        }
+
+        .wg-badge {
+            font-size: .82rem;
+            font-weight: 600;
+            padding: .2rem .65rem;
+            border-radius: 99px;
+            border: 1px solid var(--line);
+            background: var(--card);
+            color: var(--mute)
+        }
+
+        .wg-badge.imp {
+            border-color: var(--a);
+            color: var(--a)
+        }
+
+        .wg-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))
+        }
+
+        .wg-item {
+            padding: 1rem 1.15rem;
+            display: flex;
+            flex-direction: column;
+            gap: .35rem
+        }
+
+        .wg-item+.wg-item {
+            border-left: 1px solid var(--line)
+        }
+
+        @media (max-width: 600px) {
+            .wg-item+.wg-item {
+                border-left: 0;
+                border-top: 1px solid var(--line)
+            }
+        }
+
+        .wg-top {
+            display: flex;
+            align-items: center;
+            gap: .6rem
+        }
+
+        .wg-char {
+            font-size: 2.2rem;
+            line-height: 1.1;
+            font-weight: 700
+        }
+
+        .wg-char-py {
+            font-weight: 600;
+            color: var(--a2)
+        }
+
+        .wg-meaning {
+            color: var(--mute);
+            font-size: .96rem
+        }
+
+        .wg-ex {
+            margin-top: .3rem;
+            padding-top: .45rem;
+            border-top: 1px dashed var(--line);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: .5rem;
+            font-size: .95rem
+        }
+
+        .wg-ex-word {
+            font-size: 1.15rem;
+            font-weight: 600
+        }
+
+        .wg-q-clue {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: .4rem 0 .2rem
+        }
+
+        .wg-q-sub {
+            color: var(--mute);
+            font-size: 1rem;
+            margin-bottom: 1.1rem
+        }
+
+        .wg-q-opt {
+            font-size: 2.1rem;
+            padding: .85rem 1rem
+        }
+
         @media(prefers-reduced-motion:reduce) {
 
             .draw,
@@ -533,10 +655,12 @@
     <header>
         <a class="logo" href="#home"><span class="seal han">中</span>Zhongwen</a>
         <nav id="navMenu" aria-label="Main"><a href="#home">Home</a><a href="#vocabulary">Vocabulary</a><a
-                href="#flashcards">Flashcards</a><a href="#practice">Practice</a><a href="#about">About us</a></nav>
+                href="#flashcards">Flashcards</a><a href="#practice">Practice</a><a href="#confusable">Word
+                Groups</a><a href="#about">About us</a></nav>
         <div class="header-actions">
             <button class="tg" id="theme" type="button" aria-pressed="false">Dark mode</button>
-            <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation" aria-expanded="false">☰</button>
+            <button class="nav-toggle" id="navToggle" type="button" aria-label="Toggle navigation"
+                aria-expanded="false">☰</button>
         </div>
     </header>
     <main>
@@ -600,6 +724,23 @@
             <div id="quiz" class="q" aria-live="polite">Choose a level and quiz type, then press Start quiz.</div>
         </section>
 
+        <section id="confusable" class="view">
+            <div class="row" style="justify-content:space-between;margin-bottom:.75rem">
+                <h2 style="margin:0">Word Groups</h2>
+                <button class="btn alt" id="wgquiz-toggle" type="button" aria-pressed="false">Quick quiz</button>
+            </div>
+            <div class="tabs" id="wgtabs" role="group" aria-label="Character group category"></div>
+            <div id="wg-study-wrap">
+                <div class="row"><input type="search" id="wgs" placeholder="Search character, pinyin, meaning or word"
+                        aria-label="Search word groups" size="34"></div>
+                <div class="meta" id="wgmeta"></div>
+                <div class="wg-list" id="wglist"></div>
+            </div>
+            <div id="wg-quiz-wrap" style="display:none">
+                <div id="wgquiz" class="q" aria-live="polite"></div>
+            </div>
+        </section>
+
         <section id="flashcards" class="view">
             <h2>Flashcards</h2>
             <div class="row">
@@ -630,7 +771,7 @@
                 with pinyin and an English meaning. Use the Vocabulary page to study and the Practice page to check what
                 stuck.</p>
             <p>Found a mistake or want a word added? Tell us and we will fix it.</p>
-            
+
             <p>Contact us on weChat : mrx-ff</p>
         </section>
 
@@ -669,7 +810,7 @@
         }
 
         /* routing */
-        var views = ['home', 'vocabulary', 'flashcards', 'practice', 'about'];
+        var views = ['home', 'vocabulary', 'flashcards', 'practice', 'confusable', 'about'];
         function route() {
             var id = (location.hash || '#home').slice(1); if (views.indexOf(id) < 0) id = 'home';
             views.forEach(function (v) { $(v).classList.toggle('on', v === id) });
@@ -699,6 +840,650 @@
             $('vmeta').textContent = 'Showing ' + list.length + ' of ' + src.length + ' words' + (src === LV[cur] ? ' (HSK 1 to ' + cur + ')' : ' (new in HSK ' + cur + ')')
         }
         render();
+
+        /* Word Groups: Important (11), Base & Derived Components (203), Shared Components (183) */
+        var WG_RAW = [
+            /* Important (11 essential pairs) */
+            ["important", "dì", [["弟", "dì", "younger brother", "弟弟", "dìdi", "younger brother"], ["第", "dì", "prefix for ordinal numbers", "第一", "dì-yī", "first"]]],
+            ["important", "háo", [["毫", "háo", "fine hair; milli-; in the least", "毫无", "háowú", "not at all; none"], ["豪", "háo", "grand; heroic; proud", "自豪", "zìháo", "proud"]]],
+            ["important", "huì", [["慧", "huì", "intelligent; wise", "智慧", "zhìhuì", "wisdom"], ["惠", "huì", "favor; benefit; kind", "优惠", "yōuhuì", "preferential; discount"]]],
+            ["important", "hóu", [["侯", "hóu", "marquis; surname Hou", "诸侯", "zhūhóu", "feudal lords"], ["喉", "hóu", "throat; larynx", "喉咙", "hóulóng", "throat"]]],
+            ["important", "jiān", [["奸", "jiān", "treacherous; wicked; traitor", "奸诈", "jiānzhà", "treacherous; crafty"], ["歼", "jiān", "to annihilate; to wipe out", "歼灭", "jiānmiè", "to annihilate; to wipe out"]]],
+            ["important", "hún", [["混", "hún", "muddy; confused; to mix", "混浊", "húnzhuó", "muddy; turbid"], ["浑", "hún", "muddy; whole; all over", "浑身", "húnshēn", "all over the body"]]],
+            ["important", "jìn", [["进", "jìn", "to enter; to advance", "进去", "jìnqù", "to go in"], ["近", "jìn", "near; close", "最近", "zuìjìn", "recently"]]],
+            ["important", "jìng", [["竞", "jìng", "to compete; contest", "竞争", "jìngzhēng", "competition; to compete"], ["竟", "jìng", "unexpectedly; actually; after all", "竟然", "jìngrán", "unexpectedly"]]],
+            ["important", "lí", [["梨", "lí", "pear", "梨子", "lízi", "pear"], ["黎", "lí", "dawn; multitude; surname Li", "黎明", "límíng", "dawn; daybreak"]]],
+            ["important", "pō", [["坡", "pō", "slope; hillside", "山坡", "shānpō", "hillside; slope"], ["泼", "pō", "to splash; to spill; lively", "泼水", "pōshuǐ", "to splash water"]]],
+            ["important", "wǎng", [["往", "wǎng", "to go toward; past", "往往", "wǎngwǎng", "often; frequently"], ["枉", "wǎng", "crooked; in vain; to wrong", "冤枉", "yuānwǎng", "to wrong someone; unjust"]]],
+
+            /* Table 1: Base & Derived Components (203 groups) */
+            ["derived", "ā", [["阿", "ā", "prefix for kinship/names", "阿姨", "āyí", "aunt"], ["啊", "ā", "ah; exclamation particle", "啊呀", "āyā", "oh my"]]],
+            ["derived", "bā", [["八", "bā", "eight", "八月", "bāyuè", "August"], ["扒", "bā", "to dig up; to pull down", "扒开", "bākāi", "to push aside"], ["叭", "bā", "horn; sound of trumpet", "喇叭", "lǎba", "horn; loudspeaker"]]],
+            ["derived", "bā", [["巴", "bā", "to hope; to cling to", "尾巴", "wěiba", "tail"], ["吧", "ba", "suggestion particle; bar", "酒吧", "jiǔbā", "bar; pub"], ["芭", "bā", "banana plant; fragrant plant", "芭蕾", "bālěi", "ballet"]]],
+            ["derived", "bān", [["般", "bān", "sort; kind; way", "一般", "yìbān", "ordinary; generally"], ["搬", "bān", "to move; to carry", "搬家", "bānjiā", "to move house"]]],
+            ["derived", "bàn", [["半", "bàn", "half", "一半", "yíbàn", "one half"], ["伴", "bàn", "companion; to accompany", "陪伴", "péibàn", "to accompany"], ["拌", "bàn", "to mix; to stir", "凉拌", "liángbàn", "cold tossed salad"]]],
+            ["derived", "bāng", [["邦", "bāng", "nation; state; country", "联邦", "liánbāng", "federation"], ["帮", "bāng", "to help; group", "帮忙", "bāngmáng", "to help"]]],
+            ["derived", "bāo", [["包", "bāo", "bag; to wrap", "书包", "shūbāo", "schoolbag"], ["胞", "bāo", "cell; born of same parents", "同胞", "tóngbāo", "compatriot"]]],
+            ["derived", "bǎo", [["保", "bǎo", "to protect; to keep", "保护", "bǎohù", "to protect"], ["堡", "bǎo", "fort; castle", "城堡", "chéngbǎo", "castle"]]],
+            ["derived", "bào", [["暴", "bào", "violent; sudden; fierce", "暴雨", "bàoyǔ", "rainstorm"], ["爆", "bào", "to explode; to burst", "爆炸", "bàozhà", "explosion"], ["曝", "bào", "to expose to sun/media", "曝光", "bàoguāng", "exposure"]]],
+            ["derived", "bēi", [["卑", "bēi", "humble; low; inferior", "自卑", "zìbēi", "inferiority complex"], ["碑", "bēi", "monument; stele", "石碑", "shíbēi", "stone tablet"]]],
+            ["derived", "bèi", [["备", "bèi", "to prepare; equipped", "准备", "zhǔnbèi", "to prepare"], ["惫", "bèi", "exhausted; worn out", "疲惫", "píbèi", "exhausted"]]],
+            ["derived", "bīn", [["宾", "bīn", "guest; visitor", "宾馆", "bīnguǎn", "hotel"], ["滨", "bīn", "shore; waterfront", "海滨", "hǎibīn", "seashore"], ["缤", "bīn", "numerous; colorful", "缤纷", "bīnfēn", "colorful"]]],
+            ["derived", "bǐng", [["丙", "bǐng", "third; grade C", "丙等", "bǐngděng", "third grade"], ["柄", "bǐng", "handle; stem", "手柄", "shǒubǐng", "handle; controller"]]],
+            ["derived", "bǔ", [["卜", "bǔ", "to divine; radish (bo)", "占卜", "zhānbǔ", "divination"], ["补", "bǔ", "to mend; to supplement", "补充", "bǔchōng", "to supplement"]]],
+            ["derived", "bù", [["布", "bù", "cloth; to announce", "宣布", "xuānbù", "to announce"], ["怖", "bù", "terror; fearful", "恐怖", "kǒngbù", "terrifying"]]],
+            ["derived", "cái", [["才", "cái", "talent; only then", "人才", "réncái", "talent"], ["材", "cái", "material; timber", "材料", "cáiliào", "material"], ["财", "cái", "wealth; money", "财富", "cáifù", "wealth"]]],
+            ["derived", "cǎi", [["采", "cǎi", "to pick; to gather", "采访", "cǎifǎng", "to interview"], ["彩", "cǎi", "color; applause", "精彩", "jīngcǎi", "brilliant"], ["踩", "cǎi", "to step on; to tread", "踩踏", "cǎità", "to trample"], ["睬", "cǎi", "to pay attention to", "理睬", "lǐcǎi", "to heed"]]],
+            ["derived", "cáo", [["曹", "cáo", "surname Cao; ministry", "曹操", "Cáo Cāo", "Cao Cao"], ["槽", "cáo", "trough; groove; slot", "水槽", "shuǐcáo", "water trough; sink"]]],
+            ["derived", "cháng", [["尝", "cháng", "to taste; to try", "品尝", "pǐncháng", "to taste"], ["偿", "cháng", "to repay; to compensate", "赔偿", "péicháng", "to compensate"]]],
+            ["derived", "cháo", [["朝", "cháo", "dynasty; toward", "朝代", "cháodài", "dynasty"], ["潮", "cháo", "tide; damp; trendy", "高潮", "gāocháo", "climax; high tide"], ["嘲", "cháo", "to ridicule; to mock", "嘲笑", "cháoxiào", "to mock"]]],
+            ["derived", "chéng", [["成", "chéng", "to succeed; become", "成功", "chénggōng", "success"], ["城", "chéng", "city; wall", "城市", "chéngshì", "city"], ["诚", "chéng", "honest; sincere", "诚实", "chéngshí", "honest"]]],
+            ["derived", "chéng", [["呈", "chéng", "to present; to appear", "呈现", "chéngxiàn", "to present"], ["程", "chéng", "journey; process; rule", "过程", "guòchéng", "process"]]],
+            ["derived", "chuí", [["垂", "chuí", "to hang down; vertical", "垂直", "chuízhí", "vertical"], ["锤", "chuí", "hammer", "铁锤", "tiěchuí", "iron hammer"], ["捶", "chuí", "to beat; to pound", "捶打", "chuídǎ", "to pound"]]],
+            ["derived", "dài", [["代", "dài", "generation; to replace", "代表", "dàibiǎo", "representative"], ["贷", "dài", "loan; to lend/borrow", "贷款", "dàikuǎn", "loan"], ["袋", "dài", "bag; pocket", "口袋", "kǒudài", "pocket"]]],
+            ["derived", "dàn", [["旦", "dàn", "dawn; day", "元旦", "Yuándàn", "New Year's Day"], ["担", "dān", "to carry; to shoulder", "担心", "dānxīn", "to worry"], ["但", "dàn", "but; however", "但是", "dànshì", "but"]]],
+            ["derived", "dì", [["弟", "dì", "younger brother", "弟弟", "dìdi", "younger brother"], ["递", "dì", "to hand over; to deliver", "快递", "kuàidì", "express delivery"]]],
+            ["derived", "dì", [["帝", "dì", "emperor", "皇帝", "huángdì", "emperor"], ["缔", "dì", "to establish; to conclude", "缔造", "dìzào", "to found; to create"], ["蒂", "dì", "stem of fruit/flower", "花蒂", "huādì", "flower stalk"]]],
+            ["derived", "diàn", [["店", "diàn", "shop; store", "商店", "shāngdiàn", "shop"], ["惦", "diàn", "to think of; to miss", "惦记", "diànjì", "to keep thinking about"]]],
+            ["derived", "dīng", [["丁", "dīng", "fourth; small cube", "肉丁", "ròudīng", "diced meat"], ["叮", "dīng", "to sting; to urge", "叮嘱", "dīngzhǔ", "to urge repeatedly"], ["盯", "dīng", "to stare at", "盯着", "dīngzhe", "staring at"], ["钉", "dīng", "nail; to follow closely", "钉子", "dīngzi", "nail"]]],
+            ["derived", "dòu", [["豆", "dòu", "bean; pea", "土豆", "tǔdòu", "potato"], ["逗", "dòu", "to tease; funny", "逗笑", "dòuxiào", "to amuse"]]],
+            ["derived", "dù", [["度", "dù", "degree; measure", "温度", "wēndù", "temperature"], ["渡", "dù", "to cross (river); ferry", "渡过", "dùguò", "to tide over"]]],
+            ["derived", "duàn", [["段", "duàn", "section; paragraph", "段落", "duànluò", "paragraph"], ["锻", "duàn", "to forge; to temper", "锻炼", "duànliàn", "to exercise"]]],
+            ["derived", "fá", [["伐", "fá", "to cut down; to attack", "砍伐", "kǎnfá", "to fell trees"], ["阀", "fá", "valve; powerful clique", "阀门", "fámén", "valve"]]],
+            ["derived", "fāng", [["方", "fāng", "square; direction; method", "方法", "fāngfǎ", "method"], ["芳", "fāng", "fragrant; virtuous", "芳香", "fāngxiāng", "fragrant"]]],
+            ["derived", "fēi", [["非", "fēi", "not; wrong; non-", "非常", "fēicháng", "very"], ["啡", "fēi", "coffee (phonetic)", "咖啡", "kāfēi", "coffee"]]],
+            ["derived", "fēn", [["分", "fēn", "to divide; minute", "分别", "fēnbié", "respectively"], ["纷", "fēn", "numerous; disorderly", "纷纷", "fēnfēn", "one after another"], ["芬", "fēn", "fragrance; perfume", "芬芳", "fēnfāng", "fragrant"], ["吩", "fēn", "to instruct; to order", "吩咐", "fēnfù", "to instruct"]]],
+            ["derived", "fēng", [["风", "fēng", "wind; style", "风景", "fēngjǐng", "scenery"], ["疯", "fēng", "crazy; mad", "疯狂", "fēngkuáng", "crazy"]]],
+            ["derived", "fǔ", [["府", "fǔ", "government office; mansion", "政府", "zhèngfǔ", "government"], ["俯", "fǔ", "to bow; to look down", "俯视", "fǔshì", "to overlook"]]],
+            ["derived", "fù", [["付", "fù", "to pay; to hand over", "付款", "fùkuǎn", "to pay"], ["咐", "fù", "to instruct; to order", "嘱咐", "zhǔfù", "to exhort"], ["附", "fù", "to attach; nearby", "附近", "fùjìn", "nearby"]]],
+            ["derived", "fù", [["复", "fù", "to repeat; to recover", "复习", "fùxí", "to review"], ["腹", "fù", "abdomen; belly", "腹部", "fùbù", "abdomen"]]],
+            ["derived", "gài", [["丐", "gài", "beggar; to beg", "乞丐", "qǐgài", "beggar"], ["钙", "gài", "calcium", "钙片", "gàipiàn", "calcium tablet"]]],
+            ["derived", "gān", [["干", "gān", "dry; clean", "干净", "gānjìng", "clean"], ["肝", "gān", "liver", "肝脏", "gānzàng", "liver"], ["杆", "gān", "pole; shaft", "旗杆", "qígān", "flagpole"], ["竿", "gān", "bamboo pole; rod", "竹竿", "zhúgān", "bamboo pole"]]],
+            ["derived", "gāng", [["冈", "gāng", "ridge; hill", "山冈", "shāngāng", "hillock"], ["刚", "gāng", "just now; firm", "刚才", "gāngcái", "just now"], ["纲", "gāng", "outline; key link", "大纲", "dàgāng", "outline"], ["钢", "gāng", "steel", "钢琴", "gāngqín", "piano"]]],
+            ["derived", "gē", [["哥", "gē", "older brother", "哥哥", "gēge", "older brother"], ["歌", "gē", "song; to sing", "唱歌", "chànggē", "to sing"]]],
+            ["derived", "gòng", [["共", "gòng", "common; together", "共同", "gòngtóng", "common; shared"], ["供", "gòng", "to supply; offerings", "提供", "tígōng", "to provide"]]],
+            ["derived", "gōng", [["工", "gōng", "work; worker", "工作", "gōngzuò", "work"], ["功", "gōng", "merit; achievement", "成功", "chénggōng", "success"], ["攻", "gōng", "to attack; to study", "进攻", "jìngōng", "to attack"]]],
+            ["derived", "gū", [["姑", "gū", "paternal aunt; girl", "姑娘", "gūniang", "young woman"], ["菇", "gū", "mushroom", "蘑菇", "mógu", "mushroom"]]],
+            ["derived", "guàn", [["贯", "guàn", "to pass through; consistent", "贯彻", "guànchè", "to implement"], ["惯", "guàn", "accustomed to; habit", "习惯", "xíguàn", "habit"]]],
+            ["derived", "hán", [["函", "hán", "letter; case; function", "函数", "hánshù", "function (math)"], ["涵", "hán", "to contain; tolerance", "内涵", "nèihán", "connotation"]]],
+            ["derived", "hū", [["乎", "hū", "almost; classical particle", "几乎", "jīhū", "almost"], ["呼", "hū", "to breathe out; to call", "呼吸", "hūxī", "to breathe"]]],
+            ["derived", "hú", [["胡", "hú", "recklessly; beard; surname", "胡说", "húshuō", "nonsense"], ["湖", "hú", "lake", "湖水", "húshuǐ", "lake water"], ["糊", "hú", "paste; blurred; burnt", "糊涂", "hútu", "confused"]]],
+            ["derived", "hù", [["户", "hù", "household; door", "窗户", "chuānghu", "window"], ["护", "hù", "to protect; to nurse", "保护", "bǎohù", "to protect"]]],
+            ["derived", "hé", [["何", "hé", "what; why; how", "任何", "rènhé", "any"], ["荷", "hé", "lotus; burden", "荷花", "héhuā", "lotus flower"]]],
+            ["derived", "huà", [["化", "huà", "to change; -ize", "变化", "biànhuà", "change"], ["华", "huà", "splendid; China", "中华", "Zhōnghuá", "China"]]],
+            ["derived", "huāng", [["荒", "huāng", "wasteland; famine; absurd", "荒凉", "huāngliáng", "desolate"], ["慌", "huāng", "flustered; panicked", "慌张", "huāngzhāng", "flustered"]]],
+            ["derived", "huáng", [["皇", "huáng", "emperor; royal", "皇帝", "huángdì", "emperor"], ["凰", "huáng", "female phoenix", "凤凰", "fènghuáng", "phoenix"], ["煌", "huáng", "bright; brilliant", "辉煌", "huīhuáng", "splendid"]]],
+            ["derived", "huī", [["灰", "huī", "ash; dust; gray", "灰色", "huīsè", "gray"], ["恢", "huī", "to restore; vast", "恢复", "huīfù", "to recover"]]],
+            ["derived", "hūn", [["昏", "hūn", "dusk; faint; dizzy", "黄昏", "huánghūn", "dusk"], ["婚", "hūn", "marriage; to marry", "结婚", "jiéhūn", "to marry"]]],
+            ["derived", "huǒ", [["火", "huǒ", "fire; urgent", "火车", "huǒchē", "train"], ["伙", "huǒ", "partner; companion; meal", "伙伴", "huǒbàn", "partner"]]],
+            ["derived", "jí", [["及", "jí", "to reach; and", "及时", "jíshí", "timely"], ["级", "jí", "level; grade; class", "年级", "niánjí", "school grade"], ["极", "jí", "extreme; pole", "积极", "jījí", "active"]]],
+            ["derived", "jiàn", [["贱", "jiàn", "cheap; lowly; mean", "卑贱", "bēijiàn", "lowly"], ["溅", "jiàn", "to splash; to spatter", "飞溅", "fēijiàn", "to splash"]]],
+            ["derived", "jiàn", [["建", "jiàn", "to build; to establish", "建议", "jiànyì", "suggestion"], ["健", "jiàn", "healthy; strong", "健康", "jiànkāng", "healthy"], ["键", "jiàn", "key; button; bond", "键盘", "jiànpán", "keyboard"]]],
+            ["derived", "jiāo", [["交", "jiāo", "to hand over; to intersect", "交通", "jiāotōng", "traffic"], ["郊", "jiāo", "suburb; outskirts", "郊区", "jiāoqū", "suburb"], ["胶", "jiāo", "glue; rubber", "胶水", "jiāoshuǐ", "glue"]]],
+            ["derived", "jiè", [["戒", "jiè", "to guard against; ring; quit", "戒指", "jièzhi", "finger ring"], ["诫", "jiè", "to warn; commandment", "告诫", "gàojiè", "to warn"]]],
+            ["derived", "jīng", [["京", "jīng", "capital city", "北京", "Běijīng", "Beijing"], ["惊", "jīng", "startled; surprised", "吃惊", "chījīng", "surprised"]]],
+            ["derived", "jìng", [["竟", "jìng", "unexpectedly; after all", "竟然", "jìngrán", "unexpectedly"], ["境", "jìng", "border; environment", "环境", "huánjìng", "environment"], ["镜", "jìng", "mirror; lens", "镜子", "jìngzi", "mirror"]]],
+            ["derived", "jù", [["具", "jù", "tool; to possess", "家具", "jiājù", "furniture"], ["俱", "jù", "all; together; club", "俱乐部", "jùlèbù", "club"], ["惧", "jù", "to fear; dread", "恐惧", "kǒngjù", "fear"]]],
+            ["derived", "kāng", [["康", "kāng", "healthy; peaceful", "健康", "jiànkāng", "healthy"], ["慷", "kāng", "generous; fervent", "慷慨", "kāngkǎi", "generous"]]],
+            ["derived", "kǎo", [["考", "kǎo", "to test; exam", "考试", "kǎoshì", "exam"], ["烤", "kǎo", "to roast; to bake", "烤鸭", "kǎoyā", "roast duck"]]],
+            ["derived", "kěn", [["肯", "kěn", "willing; to agree", "肯定", "kěndìng", "certainly"], ["啃", "kěn", "to gnaw; to nibble", "啃骨头", "kěn gǔtou", "to gnaw a bone"]]],
+            ["derived", "kù", [["库", "kù", "warehouse; database", "仓库", "cāngkù", "warehouse"], ["裤", "kù", "trousers; pants", "裤子", "kùzi", "trousers"]]],
+            ["derived", "kuà", [["夸", "kuā", "to praise; to boast", "夸奖", "kuājiǎng", "to praise"], ["跨", "kuà", "to step across; stride", "跨越", "kuàyuè", "to cross over"]]],
+            ["derived", "kuài", [["快", "kuài", "fast; happy", "快乐", "kuàilè", "happy"], ["筷", "kuài", "chopsticks", "筷子", "kuàizi", "chopsticks"]]],
+            ["derived", "lán", [["兰", "lán", "orchid", "兰花", "lánhuā", "orchid"], ["栏", "lán", "fence; column", "栏杆", "lángān", "railing"], ["拦", "lán", "to block; to stop", "阻拦", "zǔlán", "to obstruct"]]],
+            ["derived", "lǎn", [["览", "lǎn", "to look at; to view", "展览", "zhǎnlǎn", "exhibition"], ["揽", "lǎn", "to take on; to grasp", "包揽", "bāolǎn", "to take on everything"], ["缆", "lǎn", "cable; thick rope", "缆车", "lǎnchē", "cable car"]]],
+            ["derived", "lǎo", [["老", "lǎo", "old; always", "老师", "lǎoshī", "teacher"], ["姥", "lǎo", "maternal grandmother", "姥姥", "lǎolao", "grandma"]]],
+            ["derived", "léi", [["雷", "léi", "thunder; mine", "打雷", "dǎléi", "to thunder"], ["蕾", "lěi", "flower bud", "花蕾", "huālěi", "flower bud"]]],
+            ["derived", "lí", [["离", "lí", "to leave; away from", "离开", "líkāi", "to leave"], ["璃", "lí", "colored glaze; glass", "玻璃", "bōli", "glass"]]],
+            ["derived", "lì", [["力", "lì", "power; strength", "努力", "nǔlì", "hardworking"], ["历", "lì", "history; calendar; experience", "历史", "lìshǐ", "history"]]],
+            ["derived", "lì", [["厉", "lì", "strict; severe", "厉害", "lìhai", "severe; awesome"], ["励", "lì", "to encourage", "鼓励", "gǔlì", "to encourage"]]],
+            ["derived", "lì", [["立", "lì", "to stand; to establish", "立刻", "lìkè", "immediately"], ["粒", "lì", "grain; granule", "米粒", "mǐlì", "grain of rice"]]],
+            ["derived", "liáng", [["良", "liáng", "good; fine", "良好", "liánghǎo", "good"], ["粮", "liáng", "grain; food", "粮食", "liángshi", "grain; food"]]],
+            ["derived", "liè", [["列", "liè", "row; line; to list", "排列", "páiliè", "to arrange"], ["烈", "liè", "intense; fierce", "热烈", "rèliè", "warm; enthusiastic"], ["裂", "liè", "to split; to crack", "破裂", "pòliè", "to rupture"]]],
+            ["derived", "lín", [["林", "lín", "forest; woods", "森林", "sēnlín", "forest"], ["淋", "lín", "to pour; to drench", "淋雨", "línyǔ", "caught in the rain"]]],
+            ["derived", "líng", [["令", "lìng", "order; command; make", "命令", "mìnglìng", "command"], ["铃", "líng", "bell", "门铃", "ménlíng", "doorbell"], ["龄", "líng", "age; years", "年龄", "niánlíng", "age"]]],
+            ["derived", "lóng", [["龙", "lóng", "dragon", "恐龙", "kǒnglóng", "dinosaur"], ["咙", "lóng", "throat", "喉咙", "hóulóng", "throat"], ["笼", "lóng", "cage; basket", "笼子", "lóngzi", "cage"]]],
+            ["derived", "lóng", [["隆", "lóng", "grand; prosperous; bulge", "隆重", "lóngzhòng", "grand; solemn"], ["窿", "lóng", "hole; cavity", "窟窿", "kūlong", "hole"]]],
+            ["derived", "lǜ", [["虑", "lǜ", "to consider; worry", "考虑", "kǎolǜ", "to consider"], ["滤", "lǜ", "to filter; to strain", "过滤", "guòlǜ", "to filter"]]],
+            ["derived", "luó", [["罗", "luó", "net; to collect; surname", "罗列", "luóliè", "to enumerate"], ["逻", "luó", "to patrol; logic", "逻辑", "luóji", "logic"], ["萝", "luó", "radish; creeping plant", "萝卜", "luóbo", "radish"]]],
+            ["derived", "mǎ", [["马", "mǎ", "horse", "马上", "mǎshàng", "immediately"], ["码", "mǎ", "number; code; yard", "号码", "hàomǎ", "number"]]],
+            ["derived", "mào", [["冒", "mào", "to emit; to risk; fake", "感冒", "gǎnmào", "to catch a cold"], ["帽", "mào", "hat; cap", "帽子", "màozi", "hat"]]],
+            ["derived", "máo", [["矛", "máo", "spear; lance", "矛盾", "máodùn", "contradiction"], ["茅", "máo", "reeds; thatch", "茅草", "máocǎo", "thatch grass"]]],
+            ["derived", "mén", [["门", "mén", "door; gate", "门口", "ménkǒu", "doorway"], ["们", "men", "plural suffix for people", "我们", "wǒmen", "we; us"]]],
+            ["derived", "mí", [["迷", "mí", "fan; lost; confused", "迷路", "mílù", "to get lost"], ["谜", "mí", "riddle; mystery", "谜语", "míyǔ", "riddle"]]],
+            ["derived", "miǎn", [["免", "miǎn", "to exempt; free; avoid", "免费", "miǎnfèi", "free of charge"], ["勉", "miǎn", "to encourage; strive", "勉强", "miǎnqiǎng", "reluctantly"]]],
+            ["derived", "miáo", [["苗", "miáo", "seedling; sprout; vaccine", "树苗", "shùmiáo", "sapling"], ["描", "miáo", "to trace; to describe", "描写", "miáoxiě", "to describe"]]],
+            ["derived", "míng", [["名", "míng", "name; famous", "名字", "míngzi", "name"], ["铭", "míng", "inscription; engrave", "铭记", "míngjì", "to bear in mind"]]],
+            ["derived", "mó", [["磨", "mó", "to grind; to rub; wear", "磨练", "móliàn", "to temper oneself"], ["蘑", "mó", "mushroom", "蘑菇", "mógu", "mushroom"]]],
+            ["derived", "mò", [["莫", "mò", "do not; nobody; nothing", "莫名", "mòmíng", "inexplicable"], ["寞", "mò", "lonely; quiet", "寂寞", "jìmò", "lonely"], ["漠", "mò", "desert; indifferent", "沙漠", "shāmò", "desert"]]],
+            ["derived", "mǔ", [["母", "mǔ", "mother; female", "母亲", "mǔqīn", "mother"], ["姆", "mǔ", "nanny; nurse", "保姆", "bǎomǔ", "nanny"]]],
+            ["derived", "mù", [["木", "mù", "wood; tree", "木头", "mùtou", "wood"], ["沐", "mù", "to wash hair; bathe", "沐浴", "mùyù", "to bathe"]]],
+            ["derived", "ní", [["尼", "ní", "Buddhist nun; phonetic", "尼龙", "nílóng", "nylon"], ["呢", "ne", "question particle; woolen", "呢子", "nízi", "woolen cloth"], ["泥", "ní", "mud; clay", "泥土", "nítǔ", "soil; mud"]]],
+            ["derived", "nǎi", [["乃", "nǎi", "to be; thus; so", "乃至", "nǎizhì", "and even"], ["奶", "nǎi", "milk; grandmother", "牛奶", "niúnǎi", "milk"]]],
+            ["derived", "níng", [["宁", "níng", "peaceful; would rather", "安宁", "ānníng", "peaceful"], ["拧", "níng", "to twist; to wring", "拧开", "níngkāi", "to twist open"]]],
+            ["derived", "nóng", [["农", "nóng", "agriculture; farmer", "农民", "nóngmín", "farmer"], ["浓", "nóng", "thick; dense; strong", "浓茶", "nóngchá", "strong tea"]]],
+            ["derived", "péng", [["朋", "péng", "friend", "朋友", "péngyou", "friend"], ["棚", "péng", "shed; canopy", "帐篷", "zhàngpeng", "tent"], ["鹏", "péng", "roc (mythical giant bird)", "大鹏", "dàpéng", "giant roc"]]],
+            ["derived", "pí", [["皮", "pí", "skin; leather; peel", "皮肤", "pífū", "skin"], ["疲", "pí", "tired; weary", "疲劳", "píláo", "fatigue"]]],
+            ["derived", "pì", [["辟", "pì", "to open up; to refute", "开辟", "kāipì", "to open up"], ["僻", "pì", "secluded; rare", "偏僻", "piānpì", "remote; secluded"], ["譬", "pì", "for example; analogy", "譬如", "pìrú", "for example"]]],
+            ["derived", "píng", [["平", "píng", "flat; level; peaceful", "平时", "píngshí", "usually"], ["苹", "píng", "apple", "苹果", "píngguǒ", "apple"], ["坪", "píng", "level ground; lawn", "草坪", "cǎopíng", "lawn"]]],
+            ["derived", "qī", [["妻", "qī", "wife", "妻子", "qīzi", "wife"], ["凄", "qī", "chilly; sad; bleak", "凄凉", "qīliáng", "bleak; desolate"]]],
+            ["derived", "qí", [["其", "qí", "his; its; that", "其实", "qíshí", "actually"], ["棋", "qí", "chess; board game", "下棋", "xiàqí", "to play chess"]]],
+            ["derived", "qí", [["奇", "qí", "strange; wonderful", "奇怪", "qíguài", "strange"], ["骑", "qí", "to ride (horse/bike)", "骑车", "qíchē", "to ride a bike"]]],
+            ["derived", "qì", [["气", "qì", "air; gas; anger", "天气", "tiānqì", "weather"], ["汽", "qì", "steam; vapor; motor", "汽车", "qìchē", "car"]]],
+            ["derived", "qǐ", [["乞", "qǐ", "to beg", "乞求", "qǐqiú", "to beg for"], ["迄", "qì", "up to; until", "迄今", "qìjīn", "so far"]]],
+            ["derived", "qiān", [["千", "qiān", "thousand", "千万", "qiānwàn", "by all means"], ["迁", "qiān", "to move; to relocate", "搬迁", "bānqiān", "to relocate"]]],
+            ["derived", "qiáo", [["乔", "qiáo", "tall; disguise; surname", "乔装", "qiáozhuāng", "to disguise"], ["侨", "qiáo", "emigrant; overseas", "华侨", "huáqiáo", "overseas Chinese"], ["桥", "qiáo", "bridge", "大桥", "dàqiáo", "big bridge"]]],
+            ["derived", "qiè", [["切", "qiè", "to cut; close; eager", "亲切", "qīnqiè", "cordial; kind"], ["窃", "qiè", "to steal; secretly", "盗窃", "dàoqiè", "theft"]]],
+            ["derived", "qīng", [["青", "qīng", "green; blue; young", "青年", "qīngnián", "youth"], ["清", "qīng", "clear; clean", "清楚", "qīngchu", "clear"]]],
+            ["derived", "qīng", [["顷", "qǐng", "100 mu; just now", "公顷", "gōngqǐng", "hectare"], ["倾", "qīng", "to lean; to pour out", "倾斜", "qīngxié", "to tilt"]]],
+            ["derived", "qiú", [["求", "qiú", "to request; to seek", "要求", "yāoqiú", "requirement"], ["球", "qiú", "ball; sphere; globe", "地球", "dìqiú", "Earth"]]],
+            ["derived", "qū", [["区", "qū", "area; district", "地区", "dìqū", "region"], ["躯", "qū", "body; trunk", "身躯", "shēnqū", "body; stature"]]],
+            ["derived", "rán", [["然", "rán", "so; like that; however", "然后", "ránhòu", "then"], ["燃", "rán", "to burn; to ignite", "燃烧", "ránshāo", "to burn"]]],
+            ["derived", "róu", [["柔", "róu", "soft; gentle; flexible", "温柔", "wēnróu", "gentle"], ["揉", "róu", "to rub; to knead", "揉眼睛", "róu yǎnjing", "to rub eyes"]]],
+            ["derived", "shā", [["杀", "shā", "to kill", "杀害", "shāhài", "to murder"], ["刹", "shā", "to brake; instant (chà)", "刹车", "shāchē", "to brake"]]],
+            ["derived", "shēn", [["申", "shēn", "to state; to apply", "申请", "shēnqǐng", "to apply"], ["伸", "shēn", "to stretch; to extend", "伸手", "shēnshǒu", "to stretch out hand"], ["绅", "shēn", "gentry; gentleman", "绅士", "shēnshì", "gentleman"]]],
+            ["derived", "shēng", [["生", "shēng", "life; raw; student", "生活", "shēnghuó", "life"], ["牲", "shēng", "livestock; sacrifice", "牺牲", "xīshēng", "to sacrifice"]]],
+            ["derived", "shī", [["师", "shī", "teacher; master", "老师", "lǎoshī", "teacher"], ["狮", "shī", "lion", "狮子", "shīzi", "lion"]]],
+            ["derived", "shǐ", [["史", "shǐ", "history", "历史", "lìshǐ", "history"], ["驶", "shǐ", "to drive; to sail", "驾驶", "jiàshǐ", "to drive"], ["使", "shǐ", "to make; to use; envoy", "使用", "shǐyòng", "to use"]]],
+            ["derived", "shì", [["市", "shì", "city; market", "城市", "chéngshì", "city"], ["柿", "shì", "persimmon; tomato", "西红柿", "xīhóngshì", "tomato"]]],
+            ["derived", "shì", [["式", "shì", "style; formula; type", "方式", "fāngshì", "way; mode"], ["试", "shì", "to try; to test", "考试", "kǎoshì", "exam"]]],
+            ["derived", "shòu", [["受", "shòu", "to receive; to endure", "接受", "jiēshòu", "to accept"], ["授", "shòu", "to teach; to award", "教授", "jiàoshòu", "professor"]]],
+            ["derived", "shǔ", [["署", "shǔ", "office; to sign; arrange", "部署", "bùshǔ", "to deploy"], ["薯", "shǔ", "potato; yam", "红薯", "hóngshǔ", "sweet potato"]]],
+            ["derived", "sī", [["斯", "sī", "this; gentle; phonetic", "斯文", "sīwen", "refined; gentle"], ["撕", "sī", "to tear; to rip", "撕开", "sīkāi", "to tear open"]]],
+            ["derived", "suì", [["遂", "suì", "to satisfy; thereupon", "遂心", "suìxīn", "to one's liking"], ["隧", "suì", "tunnel", "隧道", "suìdào", "tunnel"]]],
+            ["derived", "tái", [["台", "tái", "platform; stage; measure word", "台湾", "Táiwān", "Taiwan"], ["抬", "tái", "to lift; to raise", "抬头", "táitóu", "to raise one's head"]]],
+            ["derived", "tài", [["太", "tài", "too; extremely; sun", "太阳", "tàiyáng", "sun"], ["态", "tài", "attitude; state; form", "态度", "tàidu", "attitude"]]],
+            ["derived", "tàn", [["炭", "tàn", "charcoal", "木炭", "mùtàn", "charcoal"], ["碳", "tàn", "carbon", "二氧化碳", "èryǎnghuàtàn", "carbon dioxide"]]],
+            ["derived", "táng", [["唐", "táng", "Tang dynasty; surname", "唐朝", "Tángcháo", "Tang Dynasty"], ["塘", "táng", "pond; pool", "池塘", "chítáng", "pond"]]],
+            ["derived", "tíng", [["廷", "tíng", "royal court", "宫廷", "gōngtíng", "imperial court"], ["庭", "tíng", "courtyard; family; court", "家庭", "jiātíng", "family"]]],
+            ["derived", "tíng", [["亭", "tíng", "pavilion; kiosk", "亭子", "tíngzi", "pavilion"], ["停", "tíng", "to stop; to park", "停车", "tíngchē", "to park a car"]]],
+            ["derived", "tóng", [["同", "tóng", "same; together", "同学", "tóngxué", "classmate"], ["铜", "tóng", "copper; bronze", "青铜", "qīngtóng", "bronze"]]],
+            ["derived", "tǔ / tù", [["土", "tǔ", "soil; earth; local", "土地", "tǔdì", "land; soil"], ["吐", "tù", "to vomit; to spit (tǔ)", "呕吐", "ǒutù", "to vomit"]]],
+            ["derived", "wān", [["弯", "wān", "curved; to bend", "转弯", "zhuǎnwān", "to turn a corner"], ["湾", "wān", "bay; gulf", "海湾", "hǎiwān", "bay; gulf"]]],
+            ["derived", "wáng", [["王", "wáng", "king; surname Wang", "国王", "guówáng", "king"], ["旺", "wàng", "prosperous; flourishing", "兴旺", "xīngwàng", "prosperous"]]],
+            ["derived", "wěi", [["委", "wěi", "to entrust; committee", "委员会", "wěiyuánhuì", "committee"], ["萎", "wěi", "to wither; to wilt", "枯萎", "kūwěi", "withered"]]],
+            ["derived", "wèi", [["胃", "wèi", "stomach", "胃口", "wèikǒu", "appetite"], ["谓", "wèi", "to call; meaning", "所谓", "suǒwèi", "so-called"]]],
+            ["derived", "wén", [["文", "wén", "language; writing; culture", "文化", "wénhuà", "culture"], ["蚊", "wén", "mosquito", "蚊子", "wénzi", "mosquito"], ["纹", "wén", "line; pattern; grain", "花纹", "huāwén", "decorative pattern"]]],
+            ["derived", "wǔ", [["五", "wǔ", "five", "五月", "wǔyuè", "May"], ["伍", "wǔ", "ranks; troops; five", "队伍", "duìwu", "ranks; team"]]],
+            ["derived", "xī", [["西", "xī", "west", "西方", "xīfāng", "the West"], ["牺", "xī", "sacrifice", "牺牲", "xīshēng", "to sacrifice"]]],
+            ["derived", "xī", [["希", "xī", "to hope; rare", "希望", "xīwàng", "to hope"], ["稀", "xī", "rare; sparse; watery", "稀少", "xīshǎo", "sparse; rare"]]],
+            ["derived", "xī", [["析", "xī", "to analyze; to divide", "分析", "fēnxī", "to analyze"], ["晰", "xī", "clear; distinct", "清晰", "qīngxī", "clear; distinct"]]],
+            ["derived", "xī", [["息", "xī", "breath; rest; news", "休息", "xiūxi", "to rest"], ["熄", "xī", "to extinguish; to go out", "熄灭", "xīmiè", "to go out (fire)"]]],
+            ["derived", "xiāng", [["相", "xiāng", "mutual; appearance", "互相", "hùxiāng", "each other"], ["箱", "xiāng", "box; trunk; suitcase", "箱子", "xiāngzi", "box; suitcase"]]],
+            ["derived", "xiàng", [["象", "xiàng", "elephant; appearance", "大象", "dàxiàng", "elephant"], ["像", "xiàng", "to resemble; portrait", "好像", "hǎoxiàng", "to seem"], ["橡", "xiàng", "oak; rubber", "橡皮", "xiàngpí", "eraser"]]],
+            ["derived", "xiāo", [["肖", "xiāo", "resemble; zodiac (xiào)", "生肖", "shēngxiào", "Chinese zodiac"], ["消", "xiāo", "to disappear; news", "消息", "xiāoxi", "news"], ["削", "xiāo", "to peel; to pare", "削皮", "xiāopí", "to peel skin"], ["销", "xiāo", "to sell; to cancel", "销售", "xiāoshòu", "sales"], ["宵", "xiāo", "night; evening", "通宵", "tōngxiāo", "all night"]]],
+            ["derived", "xīn", [["心", "xīn", "heart; mind", "开心", "kāixīn", "happy"], ["芯", "xīn", "core; wick; chip", "芯片", "xīnpiàn", "microchip"]]],
+            ["derived", "xīn", [["新", "xīn", "new; fresh", "新鲜", "xīnxiān", "fresh"], ["薪", "xīn", "firewood; salary", "薪水", "xīnshui", "salary"]]],
+            ["derived", "xíng", [["刑", "xíng", "punishment; penalty", "刑法", "xíngfǎ", "criminal law"], ["型", "xíng", "model; type; mold", "模型", "móxíng", "model"]]],
+            ["derived", "xiù", [["秀", "xiù", "excellent; elegant; show", "优秀", "yōuxiù", "excellent"], ["绣", "xiù", "to embroider", "刺绣", "cìxiù", "embroidery"], ["锈", "xiù", "rust; to rust", "生锈", "shēngxiù", "to get rusty"]]],
+            ["derived", "xū", [["虚", "xū", "empty; modest; virtual", "虚心", "xūxīn", "modest"], ["墟", "xū", "ruins; fair", "废墟", "fèixū", "ruins"]]],
+            ["derived", "xuān", [["宣", "xuān", "to declare; to announce", "宣布", "xuānbù", "to announce"], ["喧", "xuān", "noisy; clamor", "喧哗", "xuānhuá", "uproar; noisy"]]],
+            ["derived", "xún", [["旬", "xún", "ten-day period", "上旬", "shàngxún", "first ten days of month"], ["询", "xún", "to inquire; to ask", "询问", "xúnwèn", "to inquire"]]],
+            ["derived", "yá", [["牙", "yá", "tooth; ivory", "刷牙", "shuāyá", "to brush teeth"], ["芽", "yá", "bud; sprout", "发芽", "fāyá", "to sprout"]]],
+            ["derived", "yáng", [["羊", "yáng", "sheep; goat", "羊肉", "yángròu", "mutton"], ["洋", "yáng", "ocean; foreign", "海洋", "hǎiyáng", "ocean"]]],
+            ["derived", "yè", [["夜", "yè", "night; evening", "夜晚", "yèwǎn", "night"], ["液", "yè", "liquid; fluid", "液体", "yètǐ", "liquid"]]],
+            ["derived", "yī", [["衣", "yī", "clothes; garment", "衣服", "yīfu", "clothes"], ["依", "yī", "to depend on; according to", "依靠", "yīkào", "to rely on"]]],
+            ["derived", "yì", [["义", "yì", "justice; meaning", "意义", "yìyì", "meaning; significance"], ["议", "yì", "to discuss; opinion", "建议", "jiànyì", "suggestion"]]],
+            ["derived", "yì", [["益", "yì", "benefit; profit", "利益", "lìyì", "benefit; interest"], ["溢", "yì", "to overflow; brim over", "洋溢", "yángyì", "brimming with"]]],
+            ["derived", "yīn", [["因", "yīn", "cause; because", "因为", "yīnwèi", "because"], ["姻", "yīn", "marriage", "婚姻", "hūnyīn", "marriage"]]],
+            ["derived", "yǐn", [["隐", "yǐn", "hidden; concealed", "隐藏", "yǐncáng", "to hide"], ["瘾", "yǐn", "addiction; strong habit", "上瘾", "shàngyǐn", "addicted"]]],
+            ["derived", "yǒng", [["永", "yǒng", "forever; perpetual", "永远", "yǒngyuǎn", "forever"], ["泳", "yǒng", "to swim", "游泳", "yóuyǒng", "to swim"], ["咏", "yǒng", "to chant; to sing", "歌咏", "gēyǒng", "singing"]]],
+            ["derived", "yóu", [["由", "yóu", "from; by; reason", "理由", "lǐyóu", "reason"], ["邮", "yóu", "mail; post", "邮局", "yóujú", "post office"], ["油", "yóu", "oil; fat; paint", "加油", "jiāyóu", "refuel; keep going!"]]],
+            ["derived", "yóu", [["尤", "yóu", "especially; fault", "尤其", "yóuqí", "especially"], ["犹", "yóu", "still; as if; hesitate", "犹豫", "yóuyù", "hesitant"]]],
+            ["derived", "yòu", [["右", "yòu", "right side", "右边", "yòubiān", "right side"], ["佑", "yòu", "to bless; to protect", "保佑", "bǎoyòu", "to bless"]]],
+            ["derived", "yú", [["鱼", "yú", "fish", "金鱼", "jīnyú", "goldfish"], ["渔", "yú", "to fish; fishery", "渔民", "yúmín", "fisherman"]]],
+            ["derived", "yǔ", [["与", "yǔ", "and; with; to give", "与其", "yǔqí", "rather than"], ["屿", "yǔ", "small island; islet", "岛屿", "dǎoyǔ", "islands"]]],
+            ["derived", "yuán", [["元", "yuán", "first; primary; yuan", "美元", "měiyuán", "US dollar"], ["园", "yuán", "garden; park", "公园", "gōngyuán", "park"]]],
+            ["derived", "yuán", [["原", "yuán", "original; plain", "原来", "yuánlái", "originally"], ["源", "yuán", "source; origin", "来源", "láiyuán", "source"]]],
+            ["derived", "zhàn", [["占", "zhàn", "to occupy; to account for", "占线", "zhànxiàn", "line is busy"], ["站", "zhàn", "station; to stand", "车站", "chēzhàn", "bus/train station"], ["战", "zhàn", "war; battle; to fight", "战争", "zhànzhēng", "war"]]],
+            ["derived", "zhāng", [["章", "zhāng", "chapter; seal; badge", "文章", "wénzhāng", "article"], ["彰", "zhāng", "clear; manifest", "表彰", "biǎozhāng", "to commend"]]],
+            ["derived", "zhàng", [["丈", "zhàng", "ten chi; husband", "丈夫", "zhàngfu", "husband"], ["仗", "zhàng", "battle; weaponry; rely on", "打仗", "dǎzhàng", "to fight a war"], ["杖", "zhàng", "cane; walking stick", "拐杖", "guǎizhàng", "walking stick"]]],
+            ["derived", "zhāo", [["召", "zhāo", "to summon; to convene", "召开", "zhàokāi", "to convene"], ["招", "zhāo", "to beckon; to recruit", "招聘", "zhāopìn", "to recruit"]]],
+            ["derived", "zhé", [["折", "zhé", "to fold; to break; discount", "打折", "dǎzhé", "discount"], ["哲", "zhé", "wise; philosophy", "哲学", "zhéxué", "philosophy"]]],
+            ["derived", "zhēn", [["贞", "zhēn", "chaste; loyal", "坚贞", "jiānzhēn", "steadfast"], ["侦", "zhēn", "to scout; detective", "侦探", "zhēntàn", "detective"]]],
+            ["derived", "zhēng", [["争", "zhēng", "to strive; to contend", "竞争", "jìngzhēng", "competition"], ["睁", "zhēng", "to open (eyes)", "睁眼", "zhēngyǎn", "to open eyes"], ["筝", "zhēng", "kite; zither", "风筝", "fēngzheng", "kite"]]],
+            ["derived", "zhèng", [["正", "zhèng", "straight; correct; just", "正在", "zhèngzài", "in the process of"], ["证", "zhèng", "certificate; proof", "证明", "zhèngmíng", "to prove"], ["政", "zhèng", "politics; government", "政府", "zhèngfǔ", "government"], ["症", "zhèng", "disease; symptom", "症状", "zhèngzhuàng", "symptom"]]],
+            ["derived", "zhēng", [["正", "zhēng", "first lunar month", "正月", "zhēngyuè", "first lunar month"], ["征", "zhēng", "expedition; to levy; sign", "特征", "tèzhēng", "characteristic"]]],
+            ["derived", "zhī", [["支", "zhī", "branch; to support", "支持", "zhīchí", "to support"], ["枝", "zhī", "branch; twig", "树枝", "shùzhī", "tree branch"], ["肢", "zhī", "limb", "四肢", "sìzhī", "four limbs"]]],
+            ["derived", "zhī", [["之", "zhī", "of; him/her/it", "百分之", "bǎifēnzhī", "percent"], ["芝", "zhī", "sesame; glossy ganoderma", "芝麻", "zhīma", "sesame"]]],
+            ["derived", "zhí", [["直", "zhí", "straight; direct", "直接", "zhíjiē", "directly"], ["植", "zhí", "to plant; plant", "植物", "zhíwù", "plant"], ["殖", "zhí", "to breed; colonize", "繁殖", "fánzhí", "to reproduce"]]],
+            ["derived", "zhǐ", [["止", "zhǐ", "to stop; until", "停止", "tíngzhǐ", "to stop"], ["址", "zhǐ", "location; site; address", "地址", "dìzhǐ", "address"]]],
+            ["derived", "zhǐ", [["旨", "zhǐ", "purpose; imperial decree", "宗旨", "zōngzhǐ", "aim; purpose"], ["指", "zhǐ", "finger; to point", "手指", "shǒuzhǐ", "finger"], ["脂", "zhī", "fat; grease; rouge", "脂肪", "zhīfáng", "body fat"]]],
+            ["derived", "zhì", [["至", "zhì", "to arrive; until; most", "至少", "zhìshǎo", "at least"], ["致", "zhì", "to send; to cause; delicate", "一致", "yízhì", "consistent"]]],
+            ["derived", "zhōng", [["中", "zhōng", "middle; China", "中国", "Zhōngguó", "China"], ["忠", "zhōng", "loyal; devoted", "忠诚", "zhōngchéng", "loyal"], ["钟", "zhōng", "clock; bell; minute", "分钟", "fēnzhōng", "minute"]]],
+            ["derived", "zhōu", [["州", "zhōu", "prefecture; state", "广州", "Guǎngzhōu", "Guangzhou"], ["洲", "zhōu", "continent; islet", "亚洲", "Yàzhōu", "Asia"]]],
+            ["derived", "zhū", [["朱", "zhū", "vermilion; surname Zhu", "朱红", "zhūhóng", "vermilion"], ["珠", "zhū", "pearl; bead", "珍珠", "zhēnzhū", "pearl"], ["株", "zhū", "tree trunk; plant", "植株", "zhízhū", "plant"]]],
+            ["derived", "zhuān", [["专", "zhuān", "specialized; expert", "专业", "zhuānyè", "major; specialty"], ["砖", "zhuān", "brick", "砖头", "zhuāntou", "brick"]]],
+            ["derived", "zǐ", [["子", "zǐ", "child; son; seed", "孩子", "háizi", "child"], ["仔", "zǐ", "careful; young animal", "仔细", "zǐxì", "careful"]]],
+            ["derived", "zōng", [["宗", "zōng", "ancestor; sect; model", "祖宗", "zǔzong", "ancestors"], ["综", "zōng", "comprehensive; sum up", "综合", "zōnghé", "comprehensive"], ["踪", "zōng", "footprint; trace; track", "跟踪", "gēnzōng", "to follow tracks"], ["粽", "zòng", "sticky rice dumpling", "粽子", "zòngzi", "zongzi"]]],
+            ["derived", "zòu", [["奏", "zòu", "to play music; memorial", "演奏", "yǎnzòu", "to perform music"], ["揍", "zòu", "to beat up; to hit", "挨揍", "áizòu", "to get beaten"]]],
+            ["derived", "zūn", [["尊", "zūn", "to respect; senior", "尊重", "zūnzhòng", "to respect"], ["遵", "zūn", "to obey; to observe", "遵守", "zūnshǒu", "to obey rules"]]],
+            ["derived", "zuò", [["坐", "zuò", "to sit; to travel by", "坐下", "zuòxia", "to sit down"], ["座", "zuò", "seat; base; measure word", "座位", "zuòwèi", "seat"]]],
+            ["derived", "xiāo", [["萧", "xiāo", "desolate; surname Xiao", "萧条", "xiāotiáo", "bleak; depression"], ["潇", "xiāo", "deep and clear; carefree", "潇洒", "xiāosǎ", "chic; carefree"]]],
+
+            /* Table 2: Shared Components (183 groups) */
+            ["shared", "àn", [["按", "àn", "to press; according to", "按时", "ànshí", "on time"], ["案", "àn", "case; plan; desk", "答案", "dá'àn", "answer"]]],
+            ["shared", "bān", [["班", "bān", "class; shift; team", "上班", "shàngbān", "to go to work"], ["斑", "bān", "spot; speckle; stripe", "斑马", "bānmǎ", "zebra"]]],
+            ["shared", "bǎn", [["板", "bǎn", "board; plank; boss", "黑板", "hēibǎn", "blackboard"], ["版", "bǎn", "edition; printing plate", "出版", "chūbǎn", "to publish"]]],
+            ["shared", "bǎng", [["榜", "bǎng", "list of names; model", "榜样", "bǎngyàng", "role model"], ["膀", "bǎng", "shoulder; wing", "肩膀", "jiānbǎng", "shoulder"]]],
+            ["shared", "bàng", [["谤", "bàng", "to slander; defame", "诽谤", "fěibàng", "to slander"], ["磅", "bàng", "pound (weight); scale", "英磅", "yīngbàng", "pound sterling"]]],
+            ["shared", "bì", [["壁", "bì", "wall; cliff", "墙壁", "qiángbì", "wall"], ["避", "bì", "to avoid; to evade", "避免", "bìmiǎn", "to avoid"]]],
+            ["shared", "bì", [["蔽", "bì", "to cover; to shelter", "隐蔽", "yǐnbì", "to conceal"], ["弊", "bì", "fraud; disadvantage", "弊端", "bìduān", "malpractice"]]],
+            ["shared", "biàn", [["辩", "biàn", "to debate; to argue", "辩论", "biànlùn", "debate"], ["辨", "biàn", "to distinguish", "辨认", "biànrèn", "to identify"], ["辫", "biàn", "braid; plait", "辫子", "biànzi", "braid"]]],
+            ["shared", "bō", [["波", "bō", "wave; ripple", "波浪", "bōlàng", "wave"], ["玻", "bō", "glass", "玻璃", "bōli", "glass"]]],
+            ["shared", "bó", [["伯", "bó", "father's elder brother", "伯父", "bófù", "uncle"], ["泊", "bó", "to anchor; lake (pō)", "停泊", "tíngbó", "to anchor"], ["舶", "bó", "ocean-going ship", "船舶", "chuánbó", "ships; vessels"]]],
+            ["shared", "bó", [["勃", "bó", "vigorous; suddenly", "勃勃", "bóbó", "thriving"], ["脖", "bó", "neck", "脖子", "bózi", "neck"]]],
+            ["shared", "bó", [["博", "bó", "abundant; PhD; museum", "博士", "bóshì", "PhD"], ["薄", "bó", "thin; slight (báo)", "薄弱", "bóruò", "weak; frail"], ["搏", "bó", "to fight; pulse", "搏斗", "bódòu", "to wrestle; fight"]]],
+            ["shared", "bǔ", [["捕", "bǔ", "to catch; to arrest", "捕捉", "bǔzhuō", "to catch"], ["哺", "bǔ", "to feed; to nurse", "哺乳", "bǔrǔ", "breast-feeding"]]],
+            ["shared", "cè", [["厕", "cè", "toilet; restroom", "厕所", "cèsuǒ", "toilet"], ["侧", "cè", "side; to lean", "侧面", "cèmiàn", "side"], ["测", "cè", "to measure; to test", "测量", "cèliáng", "to measure"]]],
+            ["shared", "chéng", [["澄", "chéng", "clear; to settle", "澄清", "chéngqīng", "to clarify"], ["橙", "chéng", "orange (fruit/color)", "橙子", "chéngzi", "orange"]]],
+            ["shared", "chí", [["池", "chí", "pond; pool", "游泳池", "yóuyǒngchí", "swimming pool"], ["驰", "chí", "to gallop; speed", "奔驰", "bēnchí", "to speed"]]],
+            ["shared", "chóu", [["畴", "chóu", "farmland; category", "范畴", "fànchóu", "category"], ["筹", "chóu", "to plan; chip; raise funds", "筹备", "chóubèi", "to prepare"]]],
+            ["shared", "cí", [["慈", "cí", "kind; loving; merciful", "慈祥", "cíxiáng", "kindly"], ["磁", "cí", "magnetism; porcelain", "磁铁", "cítiě", "magnet"]]],
+            ["shared", "cuī", [["催", "cuī", "to urge; to hurry", "催促", "cuīcù", "to urge"], ["摧", "cuī", "to destroy; to break", "摧毁", "cuīhuǐ", "to destroy"]]],
+            ["shared", "cuì", [["粹", "cuì", "pure; essence", "纯粹", "chúncuì", "pure"], ["翠", "cuì", "emerald; jade green", "翠绿", "cuìlǜ", "emerald green"]]],
+            ["shared", "cuō", [["搓", "cuō", "to rub with hands", "搓手", "cuōshǒu", "to rub hands"], ["磋", "cuō", "to consult; polish", "磋商", "cuōshāng", "to consult"]]],
+            ["shared", "dèng", [["凳", "dèng", "stool; bench", "凳子", "dèngzi", "stool"], ["瞪", "dèng", "to stare; to glare", "瞪眼", "dèngyǎn", "to glare"]]],
+            ["shared", "dǐ", [["底", "dǐ", "bottom; base; end", "到底", "dàodǐ", "after all"], ["抵", "dǐ", "to resist; to arrive", "抵抗", "dǐkàng", "to resist"]]],
+            ["shared", "hàn", [["捍", "hàn", "to defend; to guard", "捍卫", "hànwèi", "to defend"], ["焊", "hàn", "to weld; to solder", "焊接", "hànjiē", "to weld"]]],
+            ["shared", "dīng", [["钉", "dīng", "nail; to nail (dìng)", "钉子", "dīngzi", "nail"], ["订", "dìng", "to book; to subscribe", "预订", "yùdìng", "to reserve"]]],
+            ["shared", "dòng", [["冻", "dòng", "to freeze; cold", "冷冻", "lěngdòng", "to freeze"], ["栋", "dòng", "ridgepole; building mw.", "栋梁", "dòngliáng", "pillar; mainstay"]]],
+            ["shared", "dǔ", [["堵", "dǔ", "to block; congested", "堵车", "dǔchē", "traffic jam"], ["睹", "dǔ", "to see; to witness", "目睹", "mùdǔ", "to witness"], ["赌", "dǔ", "to gamble; to bet", "赌博", "dǔbó", "gambling"]]],
+            ["shared", "dù", [["肚", "dù", "belly; stomach", "肚子", "dùzi", "belly"], ["杜", "dù", "to prevent; surname Du", "杜绝", "dùjué", "to put an end to"]]],
+            ["shared", "é", [["俄", "é", "Russia; suddenly", "俄语", "Éyǔ", "Russian language"], ["娥", "é", "beautiful young woman", "嫦娥", "Cháng'é", "Chang'e"]]],
+            ["shared", "fàn", [["饭", "fàn", "cooked rice; meal", "米饭", "mǐfàn", "cooked rice"], ["贩", "fàn", "peddler; to deal in", "小贩", "xiǎofàn", "street vendor"]]],
+            ["shared", "fáng", [["防", "fáng", "to guard against; prevent", "预防", "yùfáng", "to prevent"], ["房", "fáng", "house; room", "房间", "fángjiān", "room"], ["妨", "fáng", "to hinder; harm", "妨碍", "fáng'ài", "to hinder"], ["肪", "fáng", "animal fat", "脂肪", "zhīfáng", "fat"]]],
+            ["shared", "fǎng", [["访", "fǎng", "to visit; to interview", "访问", "fǎngwèn", "to visit"], ["仿", "fǎng", "to imitate; similar", "模仿", "mófǎng", "to imitate"], ["纺", "fǎng", "to spin (yarn)", "纺织", "fǎngzhī", "spinning and weaving"]]],
+            ["shared", "fěi", [["绯", "fěi", "crimson; gossip", "绯闻", "fěiwén", "romantic scandal"], ["诽", "fěi", "to slander", "诽谤", "fěibàng", "to slander"]]],
+            ["shared", "fèi", [["费", "fèi", "fee; expense; to spend", "浪费", "làngfèi", "to waste"], ["沸", "fèi", "to boil", "沸水", "fèishuǐ", "boiling water"]]],
+            ["shared", "fèn", [["份", "fèn", "portion; share; copy", "一份", "yífèn", "one portion"], ["氛", "fēn", "atmosphere; air", "气氛", "qìfēn", "atmosphere"]]],
+            ["shared", "fēng", [["峰", "fēng", "mountain peak", "山峰", "shānfēng", "mountain peak"], ["锋", "fēng", "sharp point; vanguard", "锋利", "fēnglì", "sharp"], ["蜂", "fēng", "bee; wasp", "蜜蜂", "mìfēng", "honeybee"]]],
+            ["shared", "fú", [["浮", "fú", "to float; superficial", "漂浮", "piāofú", "to float"], ["俘", "fú", "prisoner of war; capture", "俘虏", "fúlǔ", "captive"]]],
+            ["shared", "fú", [["幅", "fú", "width; measure for paintings", "一幅画", "yì fú huà", "a painting"], ["辐", "fú", "spoke; radiation", "辐射", "fúshè", "radiation"], ["福", "fú", "good fortune; blessing", "幸福", "xìngfú", "happiness"]]],
+            ["shared", "fù", [["富", "fù", "rich; wealthy; abundant", "丰富", "fēngfù", "rich; abundant"], ["副", "fù", "deputy; vice; pair", "副校长", "fùxiàozhǎng", "vice principal"]]],
+            ["shared", "fù", [["傅", "fù", "teacher; master", "师傅", "shīfu", "master worker"], ["缚", "fù", "to bind; to tie up", "束缚", "shùfù", "to bind; restrict"]]],
+            ["shared", "gài", [["概", "gài", "general; approximate", "大概", "dàgài", "probably"], ["溉", "gài", "to irrigate", "灌溉", "guàngài", "to irrigate"]]],
+            ["shared", "gǎo", [["搞", "gǎo", "to do; to make; to handle", "搞好", "gǎohǎo", "to do well"], ["稿", "gǎo", "draft; manuscript", "草稿", "cǎogǎo", "rough draft"]]],
+            ["shared", "gēn", [["根", "gēn", "root; basis; measure word", "根据", "gēnjù", "according to"], ["跟", "gēn", "heel; with; to follow", "跟着", "gēnzhe", "following"]]],
+            ["shared", "gòu", [["构", "gòu", "to construct; structure", "结构", "jiégòu", "structure"], ["购", "gòu", "to buy; to purchase", "购物", "gòuwù", "shopping"]]],
+            ["shared", "guǎn", [["馆", "guǎn", "hall; shop; restaurant", "饭馆", "fànguǎn", "restaurant"], ["管", "guǎn", "tube; to manage", "管理", "guǎnlǐ", "to manage"]]],
+            ["shared", "hàn", [["憾", "hàn", "regret", "遗憾", "yíhàn", "regret; pity"], ["撼", "hàn", "to shake; to move", "震撼", "zhènhàn", "to shock; shake"]]],
+            ["shared", "hé", [["何", "hé", "what; why; how", "如何", "rúhé", "how"], ["河", "hé", "river", "黄河", "Huáng Hé", "Yellow River"]]],
+            ["shared", "háo", [["毫", "háo", "fine hair; milli-", "毫不", "háobù", "not at all"], ["豪", "háo", "heroic; grand", "豪爽", "háoshuǎng", "straightforward"]]],
+            ["shared", "hěn", [["很", "hěn", "very", "很好", "hěnhǎo", "very good"], ["狠", "hěn", "ruthless; cruel; firm", "狠心", "hěnxīn", "heartless"]]],
+            ["shared", "hōng", [["哄", "hōng", "roar of laughter; coax (hǒng)", "哄笑", "hōngxiào", "roar with laughter"], ["烘", "hōng", "to bake; to warm by fire", "烘干", "hōnggān", "to dry by heat"]]],
+            ["shared", "hóng", [["红", "hóng", "red", "红色", "hóngsè", "red color"], ["虹", "hóng", "rainbow", "彩虹", "cǎihóng", "rainbow"]]],
+            ["shared", "hóu", [["猴", "hóu", "monkey", "猴子", "hóuzi", "monkey"], ["喉", "hóu", "throat", "咽喉", "yānhóu", "throat"]]],
+            ["shared", "huàn", [["换", "huàn", "to change; to exchange", "交换", "jiāohuàn", "to exchange"], ["唤", "huàn", "to call; to summon", "呼唤", "hūhuàn", "to call out"], ["痪", "huàn", "paralysis", "瘫痪", "tānhuàn", "paralysis"]]],
+            ["shared", "huī", [["挥", "huī", "to wave; to command", "挥手", "huīshǒu", "to wave hand"], ["辉", "huī", "brightness; splendor", "光辉", "guānghuī", "radiance"]]],
+            ["shared", "jī", [["机", "jī", "machine; opportunity", "飞机", "fēijī", "airplane"], ["肌", "jī", "muscle; flesh", "肌肉", "jīròu", "muscle"], ["饥", "jī", "hungry; famine", "饥饿", "jī'è", "hunger"], ["讥", "jī", "to ridicule; to mock", "讥笑", "jīxiào", "to jeer at"]]],
+            ["shared", "jì", [["济", "jì", "to aid; economy", "经济", "jīngjì", "economy"], ["剂", "jì", "dose; preparation", "药剂", "yàojì", "medicinal preparation"]]],
+            ["shared", "jì", [["记", "jì", "to remember; to record", "记得", "jìde", "to remember"], ["纪", "jì", "discipline; century; age", "世纪", "shìjì", "century"]]],
+            ["shared", "jià", [["架", "jià", "frame; shelf; quarrel", "书架", "shūjià", "bookshelf"], ["驾", "jià", "to drive; to pilot", "驾驶", "jiàshǐ", "to drive"]]],
+            ["shared", "jià", [["嫁", "jià", "to marry (a husband)", "出嫁", "chūjià", "to get married"], ["稼", "jià", "to sow; crops", "庄稼", "zhuāngjia", "crops"]]],
+            ["shared", "jiǎn", [["检", "jiǎn", "to check; to inspect", "检查", "jiǎnchá", "to inspect"], ["捡", "jiǎn", "to pick up", "捡起", "jiǎnqǐ", "to pick up"], ["俭", "jiǎn", "thrifty; frugal", "节俭", "jiéjiǎn", "thrifty"]]],
+            ["shared", "jiāng", [["僵", "jiāng", "stiff; deadlocked", "僵硬", "jiāngyìng", "stiff"], ["疆", "jiāng", "border; frontier", "新疆", "Xīnjiāng", "Xinjiang"]]],
+            ["shared", "jiāo", [["骄", "jiāo", "proud; arrogant", "骄傲", "jiāo'ào", "proud"], ["娇", "jiāo", "delicate; charming; pampered", "娇气", "jiāoqì", "squeamish; delicate"]]],
+            ["shared", "jiǎo", [["饺", "jiǎo", "dumpling", "饺子", "jiǎozi", "dumplings"], ["狡", "jiǎo", "cunning; crafty", "狡猾", "jiǎohuá", "cunning"], ["绞", "jiǎo", "to twist; to wring", "绞尽", "jiǎojìn", "to rack (one's brains)"], ["矫", "jiǎo", "to rectify; strong", "矫正", "jiǎozhèng", "to correct"]]],
+            ["shared", "jié", [["结", "jié", "knot; to tie; result", "结果", "jiéguǒ", "result"], ["洁", "jié", "clean; pure", "清洁", "qīngjié", "clean"]]],
+            ["shared", "jīng", [["精", "jīng", "essence; refined; energetic", "精神", "jīngshén", "spirit"], ["睛", "jīng", "eyeball; eye", "眼睛", "yǎnjing", "eyes"]]],
+            ["shared", "jìng", [["净", "jìng", "clean; net; only", "干净", "gānjìng", "clean"], ["静", "jìng", "quiet; still; calm", "安静", "ānjìng", "quiet"]]],
+            ["shared", "jù", [["拒", "jù", "to refuse; to resist", "拒绝", "jùjué", "to refuse"], ["距", "jù", "distance; apart from", "距离", "jùlí", "distance"], ["炬", "jù", "torch", "火炬", "huǒjù", "torch"]]],
+            ["shared", "jù", [["剧", "jù", "drama; play; severe", "京剧", "Jīngjù", "Beijing opera"], ["据", "jù", "according to; evidence", "根据", "gēnjù", "according to"]]],
+            ["shared", "jué", [["决", "jué", "to decide; definitely", "决定", "juédìng", "to decide"], ["诀", "jué", "knack; secret formula", "秘诀", "mìjué", "secret of success"]]],
+            ["shared", "jué", [["倔", "jué", "stubborn", "倔强", "juéjiàng", "stubborn"], ["崛", "jué", "to rise abruptly", "崛起", "juéqǐ", "to rise"], ["掘", "jué", "to dig; to excavate", "挖掘", "wājué", "to excavate"]]],
+            ["shared", "jùn", [["俊", "jùn", "handsome; talented", "英俊", "yīngjùn", "handsome"], ["峻", "jùn", "steep; severe", "严峻", "yánjùn", "grim; severe"]]],
+            ["shared", "kān", [["勘", "kān", "to survey; to investigate", "勘探", "kāntàn", "to explore"], ["堪", "kān", "to bear; worthy of", "不堪", "bùkān", "unbearable"]]],
+            ["shared", "kěn", [["垦", "kěn", "to reclaim wasteland", "开垦", "kāikěn", "to reclaim land"], ["恳", "kěn", "sincere; earnest", "诚恳", "chéngkěn", "sincere"]]],
+            ["shared", "kuài", [["块", "kuài", "piece; lump; yuan", "一块钱", "yí kuài qián", "one yuan"], ["快", "kuài", "fast; quick; soon", "很快", "hěn kuài", "very fast"]]],
+            ["shared", "kuàng", [["矿", "kuàng", "mine; ore; mineral", "矿泉水", "kuàngquánshuǐ", "mineral water"], ["旷", "kuàng", "vast; open; skip", "空旷", "kōngkuàng", "open and spacious"]]],
+            ["shared", "kuì", [["馈", "kuì", "to present a gift; feed", "反馈", "fǎnkuì", "feedback"], ["溃", "kuì", "to collapse; fester", "崩溃", "bēngkuì", "to collapse"]]],
+            ["shared", "lā", [["拉", "lā", "to pull; to draw", "拉开", "lākāi", "to pull open"], ["垃", "lā", "garbage; rubbish", "垃圾", "lājī", "garbage"]]],
+            ["shared", "là", [["腊", "là", "12th lunar month; cured meat", "腊月", "làyuè", "12th lunar month"], ["蜡", "là", "wax; candle", "蜡烛", "làzhú", "candle"]]],
+            ["shared", "lào", [["唠", "lào", "to chat (láo)", "唠叨", "láodao", "chatter"], ["涝", "lào", "waterlogged; flooded", "洪涝", "hónglào", "flood"]]],
+            ["shared", "lán", [["蓝", "lán", "blue", "蓝色", "lánsè", "blue color"], ["篮", "lán", "basket", "篮球", "lánqiú", "basketball"]]],
+            ["shared", "làng", [["浪", "làng", "wave; wasteful", "浪费", "làngfèi", "to waste"], ["郎", "láng", "young man; bridegroom", "新郎", "xīnláng", "bridegroom"]]],
+            ["shared", "láng", [["狼", "láng", "wolf", "大灰狼", "dàhuīláng", "big bad wolf"], ["郎", "láng", "youth; official title", "郎中", "lángzhōng", "traditional doctor"]]],
+            ["shared", "lì", [["历", "lì", "experience; calendar", "经历", "jīnglì", "experience"], ["厉", "lì", "strict; fierce", "严厉", "yánlì", "strict"]]],
+            ["shared", "liàn", [["练", "liàn", "to practice; to train", "练习", "liànxí", "to practice"], ["炼", "liàn", "to smelt; to refine", "锻炼", "duànliàn", "to exercise"]]],
+            ["shared", "liáng", [["凉", "liáng", "cool; cold", "凉快", "liángkuai", "pleasantly cool"], ["谅", "liàng", "to forgive; understand", "原谅", "yuánliàng", "to forgive"]]],
+            ["shared", "liáo", [["疗", "liáo", "to treat; therapy", "治疗", "zhìliáo", "medical treatment"], ["辽", "liáo", "distant; Liaoning", "辽阔", "liáokuò", "vast"]]],
+            ["shared", "liè", [["烈", "liè", "intense; ardent", "强烈", "qiángliè", "intense"], ["裂", "liè", "to split; crack", "裂开", "lièkāi", "to split open"]]],
+            ["shared", "líng", [["凌", "líng", "ice; to insult; approach", "凌晨", "língchén", "early morning"], ["陵", "líng", "hill; imperial tomb", "陵墓", "língmù", "mausoleum"]]],
+            ["shared", "lǒng", [["拢", "lǒng", "to gather together; close", "拉拢", "lālong", "to win over"], ["垄", "lǒng", "ridge in field; monopoly", "垄断", "lǒngduàn", "monopoly"]]],
+            ["shared", "lǚ", [["屡", "lǚ", "repeatedly; time and again", "屡次", "lǚcì", "repeatedly"], ["缕", "lǚ", "thread; strand", "千丝万缕", "qiānsī-wànlǚ", "countless ties"]]],
+            ["shared", "lùn", [["论", "lùn", "theory; to discuss", "讨论", "tǎolùn", "to discuss"], ["轮", "lún", "wheel; turn; round", "轮流", "lúnliú", "to take turns"], ["伦", "lún", "ethics; human relations", "伦理", "lúnlǐ", "ethics"], ["抡", "lūn", "to swing; to brandish", "抡起", "lūnqǐ", "to swing up"]]],
+            ["shared", "màn", [["慢", "màn", "slow", "慢慢", "mànmàn", "slowly"], ["漫", "màn", "overflow; free; comic", "浪漫", "làngmàn", "romantic"], ["蔓", "màn", "creeper; to spread", "蔓延", "mànyán", "to spread"]]],
+            ["shared", "máng", [["忙", "máng", "busy; to hurry", "帮忙", "bāngmáng", "to help"], ["芒", "máng", "awn; ray; mango", "芒果", "mángguǒ", "mango"], ["茫", "máng", "vast; boundless; lost", "迷茫", "mímáng", "confused; lost"]]],
+            ["shared", "méi", [["媒", "méi", "medium; matchmaker", "媒体", "méitǐ", "media"], ["煤", "méi", "coal", "煤炭", "méitàn", "coal"]]],
+            ["shared", "méi", [["梅", "méi", "plum blossom", "梅花", "méihuā", "plum blossom"], ["霉", "méi", "mold; mildew; bad luck", "倒霉", "dǎoméi", "unlucky"]]],
+            ["shared", "méi", [["玫", "méi", "rose", "玫瑰", "méigui", "rose"], ["枚", "méi", "measure word for coins/medals", "一枚", "yìméi", "one coin/medal"]]],
+            ["shared", "méng", [["盟", "méng", "alliance; oath", "联盟", "liánméng", "alliance"], ["萌", "méng", "sprout; cute", "萌芽", "méngyá", "sprout; bud"]]],
+            ["shared", "mì", [["秘", "mì", "secret; mysterious", "秘密", "mìmì", "secret"], ["泌", "mì", "to secrete", "分泌", "fēnmì", "to secrete"]]],
+            ["shared", "mì", [["蜜", "mì", "honey; sweet", "蜂蜜", "fēngmì", "honey"], ["密", "mì", "dense; close; secret", "密码", "mìmǎ", "password"]]],
+            ["shared", "mián", [["棉", "mián", "cotton", "棉花", "miánhua", "cotton"], ["绵", "mián", "silk floss; continuous", "绵羊", "miányáng", "sheep"]]],
+            ["shared", "miǎo", [["秒", "miǎo", "second (time)", "秒钟", "miǎozhōng", "second"], ["渺", "miǎo", "tiny; vague; distant", "渺小", "miǎoxiǎo", "tiny; insignificant"]]],
+            ["shared", "mó", [["模", "mó", "model; pattern; imitate", "模仿", "mófǎng", "to imitate"], ["膜", "mó", "membrane; film", "面膜", "miànmó", "facial mask"]]],
+            ["shared", "mó", [["磨", "mó", "to grind; polish; rub", "磨蹭", "móceng", "to dawdle"], ["魔", "mó", "demon; magic", "魔术", "móshù", "magic"]]],
+            ["shared", "mò", [["墨", "mò", "ink", "墨水", "mòshuǐ", "ink"], ["默", "mò", "silent; write from memory", "沉默", "chénmò", "silent"]]],
+            ["shared", "mù", [["墓", "mù", "grave; tomb", "坟墓", "fénmù", "grave"], ["幕", "mù", "curtain; screen; act", "屏幕", "píngmù", "screen"], ["募", "mù", "to raise; to recruit", "招募", "zhāomù", "to recruit"], ["慕", "mù", "to admire; to yearn for", "羡慕", "xiànmù", "to admire; envy"]]],
+            ["shared", "nà", [["纳", "nà", "to accept; to receive", "采纳", "cǎinà", "to adopt"], ["呐", "nà", "to shout; particle", "呐喊", "nàhǎn", "to shout aloud"]]],
+            ["shared", "nǎo", [["脑", "nǎo", "brain; mind", "电脑", "diànnǎo", "computer"], ["恼", "nǎo", "angry; annoyed", "烦恼", "fánnǎo", "worry; annoyance"]]],
+            ["shared", "niàng", [["娘", "niáng", "mother; young woman", "姑娘", "gūniang", "girl"], ["酿", "niàng", "to brew; to ferment", "酿酒", "niàngjiǔ", "to brew wine"]]],
+            ["shared", "niǔ", [["扭", "niǔ", "to twist; to sprain", "扭伤", "niǔshāng", "to sprain"], ["纽", "niǔ", "button; knob; hub", "纽扣", "niǔkòu", "button"]]],
+            ["shared", "ōu", [["殴", "ōu", "to beat up; hit", "殴打", "ōudǎ", "to beat up"], ["呕", "ǒu", "to vomit", "呕吐", "ǒutù", "to vomit"], ["欧", "ōu", "Europe; surname Ou", "欧洲", "Ōuzhōu", "Europe"]]],
+            ["shared", "pà", [["怕", "pà", "to fear; afraid", "害怕", "hàipà", "afraid"], ["帕", "pà", "handkerchief; scarf", "手帕", "shǒupà", "handkerchief"]]],
+            ["shared", "pàn", [["判", "pàn", "to judge; to sentence", "判断", "pànduàn", "to judge"], ["叛", "pàn", "to betray; to rebel", "背叛", "bèipàn", "to betray"]]],
+            ["shared", "pào", [["泡", "pào", "bubble; to steep; soak", "泡茶", "pàochá", "to brew tea"], ["炮", "pào", "cannon; firecracker", "鞭炮", "biānpào", "firecrackers"]]],
+            ["shared", "páo", [["炮", "páo", "to roast; to decoct", "炮制", "páozhì", "to concoct"], ["刨", "páo", "to dig; to plane", "刨冰", "bàobīng", "shaved ice"], ["袍", "páo", "robe; gown", "长袍", "chángpáo", "long gown"]]],
+            ["shared", "péi", [["陪", "péi", "to accompany", "陪伴", "péibàn", "to accompany"], ["培", "péi", "to cultivate; to train", "培养", "péiyǎng", "to cultivate"], ["赔", "péi", "to compensate; lose money", "赔钱", "péiqián", "to lose money"]]],
+            ["shared", "péng", [["蓬", "péng", "fluffy; luxuriant", "蓬勃", "péngbó", "vigorous"], ["篷", "péng", "sail; canopy; awning", "帐篷", "zhàngpeng", "tent"]]],
+            ["shared", "pí", [["啤", "pí", "beer", "啤酒", "píjiǔ", "beer"], ["脾", "pí", "spleen; temper", "脾气", "píqi", "temper"]]],
+            ["shared", "piān", [["偏", "piān", "inclined; biased; stubbornly", "偏偏", "piānpiān", "contrary to expectations"], ["篇", "piān", "piece of writing; sheet", "一篇文章", "yì piān wénzhāng", "an article"]]],
+            ["shared", "piāo", [["漂", "piāo", "to float; pretty (piào)", "漂亮", "piàoliang", "beautiful"], ["飘", "piāo", "to flutter; to drift in wind", "飘扬", "piāoyáng", "to flutter"]]],
+            ["shared", "pō", [["坡", "pō", "slope; hillside", "爬坡", "pápō", "to climb a slope"], ["颇", "pō", "quite; rather", "颇为", "pōwéi", "quite"]]],
+            ["shared", "pū", [["扑", "pū", "to pounce; to rush at", "扑灭", "pūmiè", "to extinguish"], ["仆", "pú", "servant", "仆人", "púrén", "servant"]]],
+            ["shared", "qī", [["期", "qī", "period; term; expect", "星期", "xīngqī", "week"], ["欺", "qī", "to bully; to deceive", "欺负", "qīfu", "to bully"]]],
+            ["shared", "qià", [["洽", "qià", "harmonious; to consult", "融洽", "róngqià", "harmonious"], ["恰", "qià", "just; exactly; appropriate", "恰好", "qiàhǎo", "just right"]]],
+            ["shared", "qíng", [["情", "qíng", "feeling; emotion; situation", "事情", "shìqing", "matter; thing"], ["晴", "qíng", "sunny; clear sky", "晴天", "qíngtiān", "sunny day"]]],
+            ["shared", "qún", [["群", "qún", "crowd; group; flock", "人群", "rénqún", "crowd"], ["裙", "qún", "skirt; dress", "裙子", "qúnzi", "skirt"]]],
+            ["shared", "rēng", [["仍", "réng", "still; yet", "仍然", "réngrán", "still"], ["扔", "rēng", "to throw; to toss", "扔掉", "rēngdiào", "to throw away"]]],
+            ["shared", "sài", [["塞", "sāi", "to stuff; cork; frontier (sài)", "堵塞", "dǔsè", "to block up"], ["赛", "sài", "match; competition", "比赛", "bǐsài", "competition"]]],
+            ["shared", "shā", [["沙", "shā", "sand", "沙漠", "shāmò", "desert"], ["纱", "shā", "gauze; yarn", "纱布", "shābù", "gauze"], ["砂", "shā", "grit; gravel; sand", "砂锅", "shāguō", "clay pot"]]],
+            ["shared", "shāo", [["稍", "shāo", "a little; slightly", "稍微", "shāowēi", "slightly"], ["梢", "shāo", "tip of branch; end", "树梢", "shùshāo", "treetop"]]],
+            ["shared", "shì", [["逝", "shì", "to pass away; elapse", "逝世", "shìshì", "to pass away"], ["誓", "shì", "oath; to swear", "发誓", "fāshì", "to swear an oath"]]],
+            ["shared", "shū", [["梳", "shū", "comb; to comb", "梳子", "shūzi", "comb"], ["疏", "shū", "sparse; distant; neglect", "生疏", "shēngshū", "unfamiliar"]]],
+            ["shared", "shǔ", [["暑", "shǔ", "summer heat", "暑假", "shǔjià", "summer vacation"], ["署", "shǔ", "government office; sign", "署名", "shǔmíng", "to sign one's name"]]],
+            ["shared", "sòng", [["讼", "sòng", "lawsuit; litigation", "诉讼", "sùsòng", "lawsuit"], ["颂", "sòng", "to praise; ode", "歌颂", "gēsòng", "to sing praises of"]]],
+            ["shared", "tā", [["他", "tā", "he; him", "他们", "tāmen", "they (male/mixed)"], ["她", "tā", "she; her", "她们", "tāmen", "they (female)"]]],
+            ["shared", "tān", [["摊", "tān", "stall; to spread out", "地摊", "dìtān", "street stall"], ["滩", "tān", "beach; shoal", "沙滩", "shātān", "sandy beach"], ["瘫", "tān", "paralyzed", "瘫痪", "tānhuàn", "paralysis"]]],
+            ["shared", "tǎng", [["躺", "tǎng", "to lie down", "躺下", "tǎngxia", "to lie down"], ["倘", "tǎng", "if; supposing", "倘若", "tǎngruò", "if"], ["淌", "tǎng", "to drip; to flow", "流淌", "liútǎng", "to flow"]]],
+            ["shared", "táo", [["逃", "táo", "to escape; to flee", "逃跑", "táopǎo", "to run away"], ["桃", "táo", "peach", "桃子", "táozi", "peach"]]],
+            ["shared", "táo", [["萄", "táo", "grape", "葡萄", "pútao", "grape"], ["陶", "táo", "pottery; happy", "陶瓷", "táocí", "ceramics"], ["淘", "táo", "to wash; naughty", "淘汰", "táotài", "to eliminate"]]],
+            ["shared", "tī", [["踢", "tī", "to kick", "踢球", "tīqiú", "to play football"], ["剔", "tī", "to pick; to scrape", "挑剔", "tiāoti", "picky"]]],
+            ["shared", "tì", [["剃", "tì", "to shave", "剃头", "tìtóu", "to shave head"], ["涕", "tì", "nasal mucus; tears", "痛哭流涕", "tòngkū-liútì", "weep bitterly"]]],
+            ["shared", "tiē", [["贴", "tiē", "to paste; stick; close", "体贴", "tǐtiē", "considerate"], ["帖", "tiē", "invitation; note; copybook", "请帖", "qǐngtiě", "invitation card"]]],
+            ["shared", "tǐng", [["挺", "tǐng", "quite; very; to stand straight", "挺好", "tǐnghǎo", "very good"], ["艇", "tǐng", "small boat; yacht", "潜艇", "qiántǐng", "submarine"]]],
+            ["shared", "wǎn", [["晚", "wǎn", "evening; late", "晚上", "wǎnshang", "evening"], ["挽", "wǎn", "to pull; to save; mourn", "挽救", "wǎnjiù", "to rescue"]]],
+            ["shared", "wǎn", [["婉", "wǎn", "tactful; graceful", "委婉", "wěiwǎn", "tactful"], ["腕", "wàn", "wrist", "手腕", "shǒuwàn", "wrist"]]],
+            ["shared", "wù", [["悟", "wù", "to realize; to comprehend", "觉悟", "juéwù", "consciousness"], ["晤", "wù", "to meet; interview", "会晤", "huìwù", "to meet"]]],
+            ["shared", "xiá", [["峡", "xiá", "gorge; strait", "三峡", "Sānxiá", "Three Gorges"], ["狭", "xiá", "narrow", "狭窄", "xiázhǎi", "narrow"]]],
+            ["shared", "xiàn", [["陷", "xiàn", "pitfall; to sink; trap", "陷入", "xiànrù", "to fall into"], ["馅", "xiàn", "filling; stuffing", "饺子馅", "jiǎozixiàn", "dumpling filling"]]],
+            ["shared", "xiáng", [["详", "xiáng", "detailed; clear", "详细", "xiángxì", "detailed"], ["祥", "xiáng", "auspicious; lucky", "吉祥", "jíxiáng", "auspicious"]]],
+            ["shared", "xiāo", [["萧", "xiāo", "bleak; surname Xiao", "萧瑟", "xiāosè", "bleak and chilly"], ["啸", "xiào", "to whistle; to roar", "海啸", "hǎixiào", "tsunami"]]],
+            ["shared", "xié", [["协", "xié", "to cooperate; assist", "协助", "xiézhù", "to assist"], ["胁", "xié", "flank; to threaten", "威胁", "wēixié", "to threaten"]]],
+            ["shared", "xíng", [["形", "xíng", "shape; form", "形容", "xíngróng", "to describe"], ["刑", "xíng", "punishment; torture", "判刑", "pànxíng", "to sentence"]]],
+            ["shared", "xùn", [["讯", "xùn", "news; message; question", "通讯", "tōngxùn", "communication"], ["迅", "xùn", "rapid; fast", "迅速", "xùnsù", "rapid"], ["汛", "xùn", "flood season", "防汛", "fángxùn", "flood control"]]],
+            ["shared", "yā", [["鸭", "yā", "duck", "烤鸭", "kǎoyā", "roast duck"], ["鸦", "yā", "crow", "乌鸦", "wūyā", "crow"]]],
+            ["shared", "yā", [["鸦", "yā", "crow; raven", "鸦雀无声", "yāquè-wúshēng", "dead silent"], ["呀", "ya", "ah; sentence particle", "好呀", "hǎoya", "great!"]]],
+            ["shared", "yāng", [["殃", "yāng", "calamity; disaster", "遭殃", "zāoyāng", "to suffer disaster"], ["秧", "yāng", "rice seedling; sprout", "秧苗", "yāngmiáo", "rice seedling"]]],
+            ["shared", "yáo", [["摇", "yáo", "to shake; to wave", "摇头", "yáotóu", "to shake head"], ["谣", "yáo", "rumor; ballad", "谣言", "yáoyán", "rumor"], ["遥", "yáo", "distant; remote", "遥远", "yáoyuǎn", "faraway"]]],
+            ["shared", "yǐ", [["椅", "yǐ", "chair", "椅子", "yǐzi", "chair"], ["倚", "yǐ", "to lean on; rely on", "倚靠", "yǐkào", "to lean against"]]],
+            ["shared", "yì", [["亿", "yì", "hundred million", "一亿", "yíyì", "100 million"], ["忆", "yì", "to recall; memory", "回忆", "huíyì", "memory"], ["艺", "yì", "art; skill", "艺术", "yìshù", "art"]]],
+            ["shared", "yì", [["役", "yì", "service; battle; labor", "战役", "zhànyì", "military campaign"], ["疫", "yì", "epidemic; plague", "疫情", "yìqíng", "epidemic situation"]]],
+            ["shared", "yōng", [["拥", "yōng", "to hug; to crowd; possess", "拥抱", "yōngbào", "to hug"], ["佣", "yōng", "servant; commission (yòng)", "佣人", "yōngrén", "servant"]]],
+            ["shared", "yǒng", [["勇", "yǒng", "brave; courageous", "勇敢", "yǒnggǎn", "brave"], ["涌", "yǒng", "to gush; to surge", "涌现", "yǒngxiàn", "to emerge in numbers"]]],
+            ["shared", "yōu", [["优", "yōu", "excellent; superior", "优秀", "yōuxiù", "excellent"], ["忧", "yōu", "worried; sorrow", "担忧", "dānyōu", "to worry"]]],
+            ["shared", "yù", [["欲", "yù", "desire; wish", "欲望", "yùwàng", "desire"], ["裕", "yù", "abundant; wealthy", "富裕", "fùyù", "wealthy"]]],
+            ["shared", "yuán", [["园", "yuán", "garden; park", "花园", "huāyuán", "flower garden"], ["圆", "yuán", "round; circle", "圆形", "yuánxíng", "circle"]]],
+            ["shared", "yùn", [["运", "yùn", "to transport; luck; sport", "运动", "yùndòng", "sport; exercise"], ["酝", "yùn", "to brew; ferment", "酝酿", "yùnniàng", "to brew; deliberate"]]],
+            ["shared", "zāo", [["遭", "zāo", "to meet with (misfortune)", "遭遇", "zāoyù", "to encounter"], ["糟", "zāo", "rotten; messy; bad", "糟糕", "zāogāo", "terrible!"]]],
+            ["shared", "zào", [["燥", "zào", "dry; parched", "干燥", "gānzào", "dry"], ["躁", "zào", "impatient; irritable", "急躁", "jízào", "impatient"]]],
+            ["shared", "zé", [["泽", "zé", "marsh; luster; favor", "光泽", "guāngzé", "luster"], ["择", "zé", "to choose; to select", "选择", "xuǎnzé", "to choose"]]],
+            ["shared", "zhà", [["炸", "zhà", "to explode; deep-fry (zhá)", "爆炸", "bàozhà", "explosion"], ["诈", "zhà", "to cheat; to swindle", "诈骗", "zhàpiàn", "fraud; scam"]]],
+            ["shared", "zhān", [["沾", "zhān", "to moisten; to touch", "沾光", "zhānguāng", "to benefit from"], ["粘", "zhān", "to glue; sticky (nián)", "粘贴", "zhāntiē", "to paste"]]],
+            ["shared", "zhàng", [["账", "zhàng", "account; bill; debt", "算账", "suànzhàng", "to settle accounts"], ["帐", "zhàng", "tent; curtain; mosquito net", "帐篷", "zhàngpeng", "tent"], ["胀", "zhàng", "to swell; inflate", "膨胀", "péngzhàng", "to expand"]]],
+            ["shared", "zhèn", [["振", "zhèn", "to shake; to vitalize", "振作", "zhènzuò", "to cheer up"], ["震", "zhèn", "to shake; earthquake", "地震", "dìzhèn", "earthquake"]]],
+            ["shared", "zhī", [["织", "zhī", "to weave; to knit", "组织", "zǔzhī", "organization"], ["帜", "zhì", "flag; banner", "旗帜", "qízhì", "banner; flag"]]],
+            ["shared", "zhǒng", [["种", "zhǒng", "seed; kind; to plant (zhòng)", "种子", "zhǒngzi", "seed"], ["肿", "zhǒng", "swollen; swelling", "红肿", "hóngzhǒng", "red and swollen"]]],
+            ["shared", "zhòng", [["种", "zhòng", "to plant; to cultivate", "种树", "zhòngshù", "to plant trees"], ["仲", "zhòng", "second; middle; arbitrate", "仲裁", "zhòngcái", "arbitration"]]],
+            ["shared", "zhù", [["住", "zhù", "to live; to stay; stop", "居住", "jūzhù", "to reside"], ["注", "zhù", "to pour; to pay attention", "注意", "zhùyì", "to pay attention"], ["驻", "zhù", "to be stationed; halt", "驻扎", "zhùzhā", "to be stationed"]]],
+            ["shared", "zhū", [["诸", "zhū", "all; various; surname Zhu", "诸位", "zhūwèi", "ladies and gentlemen"], ["猪", "zhū", "pig", "小猪", "xiǎozhū", "piglet"]]],
+            ["shared", "zhǔ", [["嘱", "zhǔ", "to urge; to enjoin", "嘱咐", "zhǔfù", "to urge"], ["瞩", "zhǔ", "to gaze at; focus on", "瞩目", "zhǔmù", "to focus attention on"]]],
+            ["shared", "zhuàng", [["状", "zhuàng", "shape; condition; certificate", "状态", "zhuàngtài", "state; condition"], ["壮", "zhuàng", "strong; robust; grand", "强壮", "qiángzhuàng", "strong"]]],
+            ["shared", "zhuàng", [["撞", "zhuàng", "to bump; to collide", "碰撞", "pèngzhuàng", "collision"], ["幢", "zhuàng", "building mw. (dòng)", "一幢楼", "yí zhuàng lóu", "a building"]]],
+            ["shared", "zǔ", [["阻", "zǔ", "to block; to hinder", "阻止", "zǔzhǐ", "to prevent"], ["祖", "zǔ", "ancestor; grandfather", "祖国", "zǔguó", "motherland"], ["组", "zǔ", "group; to organize", "组织", "zǔzhī", "to organize"]]],
+            ["shared", "zuó", [["灼", "zuó", "to burn; scorching", "焦灼", "jiāozuó", "anxious"], ["酌", "zuó", "to pour wine; consider", "斟酌", "zhēnzhuó", "to deliberate"]]],
+            ["shared", "xīng", [["猩", "xīng", "orangutan; ape", "猩猩", "xīngxing", "orangutan"], ["腥", "xīng", "fishy; raw meat smell", "腥味", "xīngwèi", "fishy smell"]]]
+        ];
+
+        var WORD_GROUPS = WG_RAW.map(function (g) {
+            return {
+                type: g[0],
+                py: g[1],
+                items: g[2].map(function (it) {
+                    return { h: it[0], p: it[1], e: it[2], exH: it[3], exP: it[4], exE: it[5] };
+                })
+            };
+        });
+
+        var WG_CATS = [
+            { id: "all", label: "All groups" },
+            { id: "important", label: "Important" },
+            { id: "derived", label: "Base & Derived Components" },
+            { id: "shared", label: "Shared Components" }
+        ];
+        var WG_BADGE = {
+            important: "Important",
+            derived: "Base & Derived",
+            shared: "Shared Component"
+        };
+        var wgCur = "all", wgTabs = $('wgtabs'), wgSearch = $('wgs');
+        var wgQuizMode = false, wgQuizToggle = $('wgquiz-toggle'), wgStudyWrap = $('wg-study-wrap'), wgQuizWrap = $('wg-quiz-wrap'), wgQuizBox = $('wgquiz'), wgState = null;
+
+        WG_CATS.forEach(function (cat) {
+            var count = cat.id === 'all'
+                ? WORD_GROUPS.length
+                : WORD_GROUPS.filter(function (g) { return g.type === cat.id }).length;
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = cat.label + ' (' + count + ')';
+            b.setAttribute('aria-pressed', cat.id === 'all');
+            b.onclick = function () {
+                wgCur = cat.id;
+                wgTabs.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b) });
+                wgRender();
+                if (wgQuizMode) wgStartQuiz();
+            };
+            wgTabs.appendChild(b);
+        });
+        wgSearch.oninput = wgRender;
+
+        wgQuizToggle.onclick = function () {
+            wgQuizMode = !wgQuizMode;
+            wgQuizToggle.setAttribute('aria-pressed', wgQuizMode);
+            wgQuizToggle.textContent = wgQuizMode ? 'Study list' : 'Quick quiz';
+            wgQuizToggle.classList.toggle('alt', !wgQuizMode);
+            wgStudyWrap.style.display = wgQuizMode ? 'none' : '';
+            wgQuizWrap.style.display = wgQuizMode ? '' : 'none';
+            if (wgQuizMode) wgStartQuiz();
+        };
+
+        function wgStartQuiz() {
+            var pool = WORD_GROUPS.filter(function (g) { return wgCur === 'all' || g.type === wgCur });
+            var limit = wgCur === 'important' ? pool.length : Math.min(pool.length, 15);
+            var qs = shuffle(pool).slice(0, limit).map(function (g) {
+                var idx = Math.floor(Math.random() * g.items.length);
+                return { group: g, target: g.items[idx] };
+            });
+            wgState = { qs: qs, i: 0, score: 0 };
+            wgAsk();
+        }
+
+        function wgAsk() {
+            wgQuizBox.textContent = '';
+            if (wgState.i >= wgState.qs.length) {
+                var s = document.createElement('div');
+                s.className = 'score';
+                s.textContent = wgState.score + ' / ' + wgState.qs.length;
+                var m = document.createElement('p');
+                m.textContent = wgState.score === wgState.qs.length
+                    ? 'Perfect score! You mastered every pair.'
+                    : 'Good practice! Review any tricky pairs and try again.';
+                var row = document.createElement('div');
+                row.className = 'cta';
+                var again = document.createElement('button');
+                again.type = 'button';
+                again.className = 'btn';
+                again.textContent = 'Play again';
+                again.onclick = wgStartQuiz;
+                var back = document.createElement('button');
+                back.type = 'button';
+                back.className = 'btn alt';
+                back.textContent = 'Back to study';
+                back.onclick = function () { wgQuizToggle.click() };
+                row.append(again, back);
+                wgQuizBox.append(s, m, row);
+                return;
+            }
+
+            var q = wgState.qs[wgState.i], g = q.group, w = q.target;
+            var opts = shuffle(g.items.slice());
+
+            var bar = document.createElement('div');
+            bar.className = 'bar';
+            var bi = document.createElement('i');
+            bi.style.width = (wgState.i / wgState.qs.length * 100) + '%';
+            bar.appendChild(bi);
+
+            var meta = document.createElement('div');
+            meta.className = 'meta';
+            meta.textContent = 'Question ' + (wgState.i + 1) + ' of ' + wgState.qs.length + ' · ' + WG_BADGE[g.type] + ' · Score ' + wgState.score;
+
+            var blanked = w.exH.split(w.h).join('＿');
+            var promptEl = document.createElement('div');
+            promptEl.className = 'prompt han';
+            promptEl.style.marginBottom = '.3rem';
+            promptEl.textContent = blanked;
+            promptEl.appendChild(spkBtn(w.exH));
+
+            var clue = document.createElement('div');
+            clue.className = 'wg-q-clue';
+            clue.textContent = w.p + ' — ' + w.e;
+
+            var sub = document.createElement('div');
+            sub.className = 'wg-q-sub';
+            sub.textContent = 'Word: ' + w.exP + ' (' + w.exE + ')';
+
+            var grid = document.createElement('div');
+            grid.className = 'opts';
+            opts.forEach(function (o) {
+                var b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'opt han wg-q-opt';
+                b.textContent = o.h;
+                b.onclick = function () {
+                    var right = o.h === w.h;
+                    if (right) wgState.score++;
+                    grid.querySelectorAll('button').forEach(function (x) {
+                        x.disabled = true;
+                        if (x.textContent === w.h) x.classList.add('ok');
+                    });
+                    if (!right) b.classList.add('bad');
+
+                    var note = document.createElement('div');
+                    note.className = 'meta';
+                    note.style.marginTop = '1rem';
+                    note.textContent = g.items.map(function (it) {
+                        return it.h + ' (' + it.p + '): ' + it.e + ' — ' + it.exH + ' (' + it.exP + ')';
+                    }).join('   |   ');
+
+                    var nextBtn = document.createElement('button');
+                    nextBtn.type = 'button';
+                    nextBtn.className = 'btn';
+                    nextBtn.style.marginTop = '.5rem';
+                    nextBtn.textContent = wgState.i + 1 < wgState.qs.length ? 'Next question' : 'See score';
+                    nextBtn.onclick = function () { wgState.i++; wgAsk() };
+                    wgQuizBox.append(note, nextBtn);
+                    nextBtn.focus();
+                };
+                grid.appendChild(b);
+            });
+
+            wgQuizBox.append(bar, meta, promptEl, clue, sub, grid);
+        }
+
+        function wgRender() {
+            var q = wgSearch.value.trim().toLowerCase(), box = $('wglist');
+            box.textContent = '';
+            var filtered = WORD_GROUPS.filter(function (g) {
+                if (wgCur !== 'all' && g.type !== wgCur) return false;
+                if (!q) return true;
+                var blob = g.py + ' ' + g.items.map(function (it) {
+                    return [it.h, it.p, it.e, it.exH, it.exP, it.exE].join(' ');
+                }).join(' ');
+                return blob.toLowerCase().indexOf(q) > -1;
+            });
+
+            if (!filtered.length) {
+                var empty = document.createElement('div');
+                empty.className = 'q';
+                empty.textContent = 'No matching word groups found.';
+                box.appendChild(empty);
+                $('wgmeta').textContent = 'Showing 0 groups';
+                return;
+            }
+
+            var fr = document.createDocumentFragment();
+            filtered.forEach(function (g) {
+                var card = document.createElement('div');
+                card.className = 'wg-card';
+
+                var head = document.createElement('div');
+                head.className = 'wg-head';
+                var pyEl = document.createElement('span');
+                pyEl.className = 'wg-py';
+                pyEl.textContent = g.py;
+                var badge = document.createElement('span');
+                badge.className = 'wg-badge' + (g.type === 'important' ? ' imp' : '');
+                badge.textContent = WG_BADGE[g.type];
+                head.append(pyEl, badge);
+                card.appendChild(head);
+
+                var grid = document.createElement('div');
+                grid.className = 'wg-grid';
+
+                g.items.forEach(function (it) {
+                    var item = document.createElement('div');
+                    item.className = 'wg-item';
+
+                    var top = document.createElement('div');
+                    top.className = 'wg-top';
+                    var ch = document.createElement('span');
+                    ch.className = 'wg-char han';
+                    ch.textContent = it.h;
+                    var cp = document.createElement('span');
+                    cp.className = 'wg-char-py';
+                    cp.textContent = it.p;
+                    top.append(ch, cp, spkBtn(it.h));
+
+                    var mean = document.createElement('div');
+                    mean.className = 'wg-meaning';
+                    mean.textContent = it.e;
+
+                    var ex = document.createElement('div');
+                    ex.className = 'wg-ex';
+                    var exInfo = document.createElement('span');
+                    var exW = document.createElement('span');
+                    exW.className = 'wg-ex-word han';
+                    exW.textContent = it.exH;
+                    var exT = document.createElement('span');
+                    exT.textContent = ' (' + it.exP + ') — ' + it.exE;
+                    exInfo.append(exW, exT);
+                    ex.append(exInfo, spkBtn(it.exH));
+
+                    item.append(top, mean, ex);
+                    grid.appendChild(item);
+                });
+
+                card.appendChild(grid);
+                fr.appendChild(card);
+            });
+
+            box.appendChild(fr);
+            $('wgmeta').textContent = 'Showing ' + filtered.length + ' of ' + WORD_GROUPS.length + ' groups';
+        }
+        wgRender();
 
         /* flashcards */
         var fd = [], fi = 0, flipped = false;
